@@ -368,32 +368,34 @@ code {
 <body>
     <h1 id="%F0%9F%A7%97-cliff-tokens">🧗 Cliff Tokens</h1>
 <p>Official reproduction code for <strong>Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning</strong>.</p>
-<p>This work identifies the <strong>precise token</strong> that triggers a trace-level shift toward failure. We call this token a <strong>cliff token</strong>: a token where the <strong>token-wise potential</strong> drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.</p>
 <p align="center">
-  <a href="paper_images/main_figure.pdf"><strong>&#x1F4C4; Main figure</strong></a>
-  &#xA0;&#xB7;&#xA0;
-  <a href="paper_images/fig16_passk_incorrect.pdf"><strong>&#x1F4CA; Representative result: Cliff-del vs. Cliff-keep</strong></a>
+  <img src="file:///workspace/cliff_token_code/paper_images/main_figure.png" alt="Cliff Tokens main figure" width="900">
 </p>
+<p>This work identifies the <strong>precise token</strong> that triggers a trace-level shift toward failure. We call this token a <strong>cliff token</strong>: a token where the <strong>token-wise potential</strong> drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.</p>
 <hr>
 <h2 id="%F0%9F%94%8D-paper-in-brief">🔍 Paper in Brief</h2>
 <ul>
-<li><strong>Token-wise potential</strong> is the probability that a reasoning process reaches the correct answer, given the partial trace up to token position <code>t</code>.</li>
-<li><strong>Cliff token</strong> detection uses rollout-estimated potential at every token and flags statistically significant drops: <code>Δ_t &gt; 0.1 + 1.645 · SE_t</code>.</li>
-<li><strong>RQ1: Failure triggers.</strong> Cliff tokens occur more often in incorrect traces, and removing the first cliff token (<code>Cliff-del</code>) restores reasoning more reliably than continuing from it (<code>Cliff-keep</code>).</li>
-<li><strong>RQ2: Cliff taxonomy.</strong> Cliff tokens are categorized by greedy choice and token entropy into deterministic, uncertain, and sampled-off cliffs.</li>
-<li><strong>RQ3: Family and scale effects.</strong> Deterministic cliffs are largely scale-invariant, uncertain cliffs expose model-specific knowledge gaps, and sampled-off cliffs show scale-asymmetry.</li>
+<li><strong>Token-Wise Potential.</strong> The probability that a reasoning process reaches the correct answer, given the partial trace up to token position <code>t</code>.</li>
+<li><strong>Cliff Token.</strong> A token whose rollout-estimated potential drops significantly under the adaptive threshold <code>Δ_t &gt; 0.1 + 1.645 · SE_t</code>.</li>
+<li><strong>RQ1. Failure Trigger.</strong> Cliff tokens occur more often in incorrect traces; deleting the first cliff token (<code>Cliff-del</code>) restores reasoning more reliably than continuing from it (<code>Cliff-keep</code>).</li>
+<li><strong>RQ2. Cliff Taxonomy.</strong> Cliff tokens are categorized by greedy choice and token entropy into deterministic, uncertain, and sampled-off cliffs.</li>
+<li><strong>RQ3. Family and Scale Effects.</strong> Deterministic cliffs are largely scale-invariant, uncertain cliffs expose model-specific knowledge gaps, and sampled-off cliffs show scale-asymmetry.</li>
 <li><strong>Cliff-DPO.</strong> Single-token preference optimization at cliff positions improves reasoning when trained on uncertain and sampled-off cliffs, while deterministic cliffs are less effective.</li>
 </ul>
+<p align="center">
+  <img src="file:///workspace/cliff_token_code/paper_images/fig16_passk_incorrect.png" alt="Cliff-del vs. Cliff-keep representative result" width="900">
+</p>
+<p><strong>RQ1. Failure Trigger</strong> experiment compares continuing from the first cliff token (<code>Cliff-keep</code>) against deleting it and resuming generation (<code>Cliff-del</code>), showing that failures are often recoverable from a single cliff-token deletion.</p>
 <hr>
 <h2 id="%E2%9C%A8-what-this-repo-reproduces">✨ What This Repo Reproduces</h2>
 <ul>
-<li>🔎 Cliff token identification from generated math reasoning traces</li>
-<li>📉 Token-wise potential estimation with rollout sampling</li>
-<li>🧪 Adaptive z-test thresholding for statistically significant drops</li>
-<li>🧭 Deterministic / uncertain / sampled-off cliff taxonomy</li>
-<li>🔁 Cliff probability mass and cross-model CPM shift analyses</li>
-<li>🧗 Cliff-DPO data construction, training, and evaluation</li>
-<li>🖼️ Paper figures from shipped PDFs or regenerable figure code</li>
+<li><strong>Cliff Token Detection</strong> from generated mathematical reasoning traces</li>
+<li><strong>Token-Wise Potential</strong> estimation with rollout sampling</li>
+<li><strong>Adaptive Z-Test Thresholding</strong> for statistically significant potential drops</li>
+<li><strong>Cliff Taxonomy</strong> into deterministic, uncertain, and sampled-off cases</li>
+<li><strong>CPM Shift Analysis</strong> across model families and scales</li>
+<li><strong>Cliff-DPO</strong> data construction, training, and evaluation</li>
+<li><strong>Paper Figures</strong> from preserved PDFs and regenerable figure code</li>
 </ul>
 <hr>
 <h2 id="%F0%9F%93%A6-repository-layout">📦 Repository Layout</h2>
@@ -431,8 +433,7 @@ output/       # inference, rollout, analysis, and training outputs
     └── logs/
 </div></code></pre>
 <hr>
-<h2 id="%F0%9F%9B%A0%EF%B8%8F-standalone-environment-setup">🛠️ Standalone Environment Setup</h2>
-<p>After splitting <code>cliff_token_code/</code> into its own repository, run every command from the new repo root. No parent <code>/workspace</code> path or external <code>PYTHONPATH</code> is required.</p>
+<h2 id="%F0%9F%9B%A0%EF%B8%8F-env-setup">🛠️ Env Setup</h2>
 <p>Tested with Python 3.10, CUDA 12.x, NVIDIA driver 535+, PyTorch 2.6, and vLLM 0.8.4.</p>
 <pre class="hljs"><code><div>git <span class="hljs-built_in">clone</span> &lt;repo-url&gt; cliff-token-code
 <span class="hljs-built_in">cd</span> cliff-token-code
@@ -451,7 +452,6 @@ pip install -r requirements.txt
 <p>All generated artifacts stay inside repo-local <code>model/</code>, <code>data/input/</code>, and <code>output/</code> directories.</p>
 <hr>
 <h2 id="%F0%9F%9A%80-quick-reproduction">🚀 Quick Reproduction</h2>
-<p>Run commands from the repository root.</p>
 <h3 id="1-download-models">1. Download Models</h3>
 <p>The paper evaluates seven instruction-tuned models across model families and scales.</p>
 <pre class="hljs"><code><div>python -m src.utils.download_models --hf_token <span class="hljs-string">"<span class="hljs-variable">$HF_TOKEN</span>"</span>

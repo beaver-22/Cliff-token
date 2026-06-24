@@ -2,34 +2,30 @@
 
 Official reproduction code for **Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning**.
 
-This work identifies the **precise token** that triggers a trace-level shift toward failure. We call this token a **cliff token**: a token where the **token-wise potential** drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.
-
 <p align="center">
   <img src="paper_images/main_figure.png" alt="Cliff Tokens main figure" width="900">
 </p>
 
-<p align="center">
-  <a href="paper_images/main_figure.pdf">Main figure PDF</a>
-</p>
+This work identifies the **precise token** that triggers a trace-level shift toward failure. We call this token a **cliff token**: a token where the **token-wise potential** drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.
 
-<p align="center">
-  <img src="paper_images/fig16_passk_incorrect.png" alt="Cliff-del vs. Cliff-keep representative result" width="900">
-</p>
 
-<p align="center">
-  <a href="paper_images/fig16_passk_incorrect.pdf">Representative result PDF</a>
-</p>
 
 ---
 
 ## 🔍 Paper in Brief
 
-- **Token-wise potential** is the probability that a reasoning process reaches the correct answer, given the partial trace up to token position `t`.
-- **Cliff token** detection uses rollout-estimated potential at every token and flags statistically significant drops: `Δ_t > 0.1 + 1.645 · SE_t`.
-- **RQ1: Failure triggers.** Cliff tokens occur more often in incorrect traces, and removing the first cliff token (`Cliff-del`) restores reasoning more reliably than continuing from it (`Cliff-keep`).
-- **RQ2: Cliff taxonomy.** Cliff tokens are categorized by greedy choice and token entropy into deterministic, uncertain, and sampled-off cliffs.
-- **RQ3: Family and scale effects.** Deterministic cliffs are largely scale-invariant, uncertain cliffs expose model-specific knowledge gaps, and sampled-off cliffs show scale-asymmetry.
+- **Token-Wise Potential.** The probability that a reasoning process reaches the correct answer, given the partial trace up to token position `t`.
+- **Cliff Token.** A token whose rollout-estimated potential drops significantly under the adaptive threshold `Δ_t > 0.1 + 1.645 · SE_t`.
+- **RQ1. Failure Trigger.** Cliff tokens occur more often in incorrect traces; deleting the first cliff token (`Cliff-del`) restores reasoning more reliably than continuing from it (`Cliff-keep`).
+- **RQ2. Cliff Taxonomy.** Cliff tokens are categorized by greedy choice and token entropy into deterministic, uncertain, and sampled-off cliffs.
+- **RQ3. Family and Scale Effects.** Deterministic cliffs are largely scale-invariant, uncertain cliffs expose model-specific knowledge gaps, and sampled-off cliffs show scale-asymmetry.
 - **Cliff-DPO.** Single-token preference optimization at cliff positions improves reasoning when trained on uncertain and sampled-off cliffs, while deterministic cliffs are less effective.
+
+<p align="center">
+  <img src="paper_images/fig16_passk_incorrect.png" alt="Cliff-del vs. Cliff-keep representative result" width="900">
+</p>
+
+**RQ1. Failure Trigger** experiment compares continuing from the first cliff token (`Cliff-keep`) against deleting it and resuming generation (`Cliff-del`), showing that failures are often recoverable from a single cliff-token deletion.
 
 ---
 
