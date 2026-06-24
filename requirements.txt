@@ -1,0 +1,51 @@
+# Cliff Token Analysis (CTA) - Requirements
+# Tested with Python 3.10, CUDA 12.x, NVIDIA Driver 535+
+
+# Core inference engine (vllm 0.8.4 requires torch 2.6.x)
+torch==2.6.0
+vllm==0.8.4
+transformers==4.56.2
+# vllm 0.8.4's LoRA path calls cachetools' 5.x mangled name
+# `_LRUCache__update`. cachetools 6.x renamed it to `__touch`, which crashes
+# every LoRA adapter activation inside vllm with AttributeError. Pin to 5.x
+# until vllm gets upgraded.
+cachetools<6
+
+# Tokenizer & model hub
+huggingface-hub==0.36.0
+safetensors==0.4.3
+tokenizers==0.22.2
+sentencepiece==0.2.0
+
+# Math answer verification (grading)
+math_verify==0.9.0
+
+# Utilities
+numpy>=1.23.5,<2.0.0
+tqdm==4.66.4
+psutil>=5.9
+matplotlib==3.9.1
+seaborn==0.13.2
+scipy==1.14.0
+wordcloud>=1.9
+
+# DPO training pipeline (src/dpo/)
+trl==0.9.6
+peft==0.11.1
+# accelerate >=1.0 required: transformers 4.46+ calls
+# accelerator.unwrap_model(model, keep_torch_compile=...) which was added in
+# accelerate 1.0. Older versions raise TypeError at trainer.train().
+accelerate>=1.0
+datasets==2.20.0
+wandb>=0.17.0
+
+# Notes on optional / removed deps
+#   - flash-attn: NOT required. train_dpo.py uses attn_implementation="sdpa"
+#     (PyTorch built-in). If you want flash-attn anyway:
+#       pip install flash-attn --no-build-isolation
+#     and switch attn_implementation back to "flash_attention_2".
+#   - bitsandbytes: do NOT install. The 0.43.x build imports `triton.ops`,
+#     which was removed in triton 3.2 (shipped with torch 2.6), so importing
+#     it crashes peft's LoRA path. We don't use 8-bit / 4-bit quantization,
+#     so leave it uninstalled. If pip drags it in transitively, run:
+#       pip uninstall -y bitsandbytes

@@ -1,0 +1,18 @@
+cliff_uid,dataset,path_id,cliff_position,cell_label,selected_rank,selected_potential,greedy_rank,greedy_potential,recovery_gap,entropy_at_t
+gsm1k::GSM1K_13_path_0::665,gsm1k,GSM1K_13_path_0,665,high-H + non-greedy,2,0.0,1,0.359375,0.359375,1.2145289832782973
+gsm1k::GSM1K_859_path_0::128,gsm1k,GSM1K_859_path_0,128,high-H + non-greedy,3,0.359375,1,0.484375,0.125,1.7481192795398084
+gsm1k::GSM1K_859_path_0::225,gsm1k,GSM1K_859_path_0,225,high-H + non-greedy,2,0.0,1,0.421875,0.421875,0.7827730276819374
+math500::test/algebra/2780.json_path_0::316,math500,test/algebra/2780.json_path_0,316,high-H + non-greedy,2,0.703125,1,1.0,0.296875,0.9601887022892542
+math500::test/counting_and_probability/1003.json_path_0::315,math500,test/counting_and_probability/1003.json_path_0,315,high-H + non-greedy,2,0.8125,1,0.75,-0.0625,1.7570747969121354
+math500::test/geometry/65.json_path_0::412,math500,test/geometry/65.json_path_0,412,high-H + non-greedy,2,0.28125,1,0.421875,0.140625,2.0748211612610805
+math500::test/geometry/65.json_path_0::460,math500,test/geometry/65.json_path_0,460,high-H + non-greedy,2,0.21875,1,0.5,0.28125,0.7686736955744261
+math500::test/intermediate_algebra/1981.json_path_0::373,math500,test/intermediate_algebra/1981.json_path_0,373,high-H + non-greedy,2,0.0,1,1.0,1.0,0.6759158039048844
+math500::test/intermediate_algebra/955.json_path_0::1746,math500,test/intermediate_algebra/955.json_path_0,1746,high-H + non-greedy,2,0.09375,1,0.953125,0.859375,0.6628776789856357
+math500::test/number_theory/516.json_path_0::125,math500,test/number_theory/516.json_path_0,125,high-H + non-greedy,2,0.03125,1,0.40625,0.375,1.3580881923970378
+math500::test/number_theory/737.json_path_0::125,math500,test/number_theory/737.json_path_0,125,high-H + non-greedy,3,0.296875,1,0.34375,0.046875,1.7093390383357623
+math500::test/precalculus/1172.json_path_0::708,math500,test/precalculus/1172.json_path_0,708,high-H + non-greedy,2,0.34375,1,0.765625,0.421875,1.6500580179509763
+math500::test/precalculus/1172.json_path_0::1109,math500,test/precalculus/1172.json_path_0,1109,high-H + non-greedy,2,0.359375,1,0.9375,0.578125,0.6855921812780015
+math500::test/precalculus/1313.json_path_0::562,math500,test/precalculus/1313.json_path_0,562,high-H + non-greedy,6,0.4375,1,0.4375,0.0,2.3169585551436263
+math500::test/precalculus/285.json_path_0::923,math500,test/precalculus/285.json_path_0,923,high-H + non-greedy,2,0.546875,1,1.0,0.453125,1.6357742150266734
+math500::test/precalculus/285.json_path_0::1025,math500,test/precalculus/285.json_path_0,1025,high-H + non-greedy,2,0.140625,1,0.78125,0.640625,2.1602604617554872
+math500::test/precalculus/681.json_path_0::68,math500,test/precalculus/681.json_path_0,68,high-H + non-greedy,2,0.671875,1,0.78125,0.109375,1.4259156474441197

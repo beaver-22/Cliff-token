@@ -1,0 +1,69 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python caches / packaging
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.venv/
+venv/
+env/
+.env
+.env.*
+conda-meta/
+
+# HuggingFace / vLLM / torch local caches
+.cache/
+hf_cache/
+huggingface_cache/
+torch_compile_cache/
+
+# Downloaded model weights: regenerate with src.utils.download_models
+model/
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.gguf
+
+# Downloaded/generated datasets: regenerate with src.utils.download_datasets and create_subsets
+data/input/
+data/cache/
+
+# Experiment and training outputs
+output/
+outputs/
+results/
+runs/
+wandb/
+logs/
+*.log
+
+# Temporary smoke artifacts
+smoke_scripts/
+tmp/
+temp/
+
+# Keep paper/figure assets tracked:
+# - paper_images/
+# - figure/data/
+# - figure/output/
+# - figure/output_recovery/

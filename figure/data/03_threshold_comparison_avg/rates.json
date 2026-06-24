@@ -1,0 +1,44 @@
+{
+  "Qwen3-8B": {
+    "success": 0.12777777777777777,
+    "failure": 1.46,
+    "n_success": 180,
+    "n_failure": 50
+  },
+  "Qwen3-4B": {
+    "success": 0.14942528735632185,
+    "failure": 0.8214285714285714,
+    "n_success": 174,
+    "n_failure": 56
+  },
+  "Qwen3-0.6B": {
+    "success": 0.31313131313131315,
+    "failure": 0.7099236641221374,
+    "n_success": 99,
+    "n_failure": 131
+  },
+  "Llama-3.1-8B-Instruct": {
+    "success": 0.5344827586206896,
+    "failure": 0.631578947368421,
+    "n_success": 116,
+    "n_failure": 114
+  },
+  "Llama-3.2-3B-Instruct": {
+    "success": 0.2636363636363636,
+    "failure": 0.5333333333333333,
+    "n_success": 110,
+    "n_failure": 120
+  },
+  "Llama-3.2-1B-Instruct": {
+    "success": 0.37735849056603776,
+    "failure": 0.2033898305084746,
+    "n_success": 53,
+    "n_failure": 177
+  },
+  "gemma-3-4b-it": {
+    "success": 0.18354430379746836,
+    "failure": 0.7638888888888888,
+    "n_success": 158,
+    "n_failure": 72
+  }
+}

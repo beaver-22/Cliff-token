@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>README.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///workspace/R%3A%5C2.Travail%5C1.Enseignement%5CCours%5C_1.Outils%5C2.Developpement%5C1.SCSS%5Cmain.css" type="text/css"><link rel="stylesheet" href="file:///workspace/D%3A%5Crdaros%5CCours%5C_1.Outils%5C2.Developpement%5C1.SCSS%5Cmain.css" type="text/css">
+</head>
+
+<body>
+    <h1 id="%F0%9F%A7%97-cliff-tokens">🧗 Cliff Tokens</h1>
+<p>Official reproduction code for <strong>Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning</strong>.</p>
+<p>This work identifies the <strong>precise token</strong> that triggers a trace-level shift toward failure. We call this token a <strong>cliff token</strong>: a token where the <strong>token-wise potential</strong> drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.</p>
+<p align="center">
+  <a href="paper_images/main_figure.pdf"><strong>&#x1F4C4; Main figure</strong></a>
+  &#xA0;&#xB7;&#xA0;
+  <a href="paper_images/fig16_passk_incorrect.pdf"><strong>&#x1F4CA; Representative result: Cliff-del vs. Cliff-keep</strong></a>
+</p>
+<hr>
+<h2 id="%F0%9F%94%8D-paper-in-brief">🔍 Paper in Brief</h2>
+<ul>
+<li><strong>Token-wise potential</strong> is the probability that a reasoning process reaches the correct answer, given the partial trace up to token position <code>t</code>.</li>
+<li><strong>Cliff token</strong> detection uses rollout-estimated potential at every token and flags statistically significant drops: <code>Δ_t &gt; 0.1 + 1.645 · SE_t</code>.</li>
+<li><strong>RQ1: Failure triggers.</strong> Cliff tokens occur more often in incorrect traces, and removing the first cliff token (<code>Cliff-del</code>) restores reasoning more reliably than continuing from it (<code>Cliff-keep</code>).</li>
+<li><strong>RQ2: Cliff taxonomy.</strong> Cliff tokens are categorized by greedy choice and token entropy into deterministic, uncertain, and sampled-off cliffs.</li>
+<li><strong>RQ3: Family and scale effects.</strong> Deterministic cliffs are largely scale-invariant, uncertain cliffs expose model-specific knowledge gaps, and sampled-off cliffs show scale-asymmetry.</li>
+<li><strong>Cliff-DPO.</strong> Single-token preference optimization at cliff positions improves reasoning when trained on uncertain and sampled-off cliffs, while deterministic cliffs are less effective.</li>
+</ul>
+<hr>
+<h2 id="%E2%9C%A8-what-this-repo-reproduces">✨ What This Repo Reproduces</h2>
+<ul>
+<li>🔎 Cliff token identification from generated math reasoning traces</li>
+<li>📉 Token-wise potential estimation with rollout sampling</li>
+<li>🧪 Adaptive z-test thresholding for statistically significant drops</li>
+<li>🧭 Deterministic / uncertain / sampled-off cliff taxonomy</li>
+<li>🔁 Cliff probability mass and cross-model CPM shift analyses</li>
+<li>🧗 Cliff-DPO data construction, training, and evaluation</li>
+<li>🖼️ Paper figures from shipped PDFs or regenerable figure code</li>
+</ul>
+<hr>
+<h2 id="%F0%9F%93%A6-repository-layout">📦 Repository Layout</h2>
+<pre class="hljs"><code><div>.
+├── src/                 # core Python package
+├── scripts/             # experiment entrypoints
+├── figure/              # figure notebooks, reduced data, generated figures
+├── paper_images/        # exact PDF images used in the paper
+├── requirements.txt     # tested Python/CUDA dependency pins
+├── README.md
+└── LICENSE
+</div></code></pre>
+<p>Generated artifacts are intentionally ignored by git:</p>
+<pre class="hljs"><code><div>model/        # downloaded model weights
+data/input/   # downloaded datasets and generated subsets
+output/       # inference, rollout, analysis, and training outputs
+</div></code></pre>
+<h2 id="%F0%9F%97%82%EF%B8%8F-output-layout">🗂️ Output Layout</h2>
+<p>Experiment outputs are named in paper-reproduction order. Wrappers use these paths by default unless <code>--output_dir</code> or the corresponding input root is provided.</p>
+<pre class="hljs"><code><div>output/
+├── 01_inference/                # sampled reasoning traces
+├── 02_token_stats/              # per-token logprob/rank/entropy stats
+├── 03_rollout/                  # token-wise potential rollout outputs
+├── 04_cliff_occurrence/         # cliff occurrence and taxonomy summaries
+├── 05_deletion_ablation/        # Cliff-del / Cliff-keep pass@k results
+├── 06_entropy_rank/             # entropy/rank analyses around cliffs
+├── 07_candidate_replacement/    # candidate replacement at cliff positions
+├── 08_cpm_shift/                # cross-model cliff probability mass shift
+└── 09_cliff_dpo/
+    ├── 01_candidates/           # top-k candidate rollout at cliff positions
+    ├── 02_pairs/                # cliff-position preference pairs
+    ├── 03_training/             # trained Cliff-DPO adapters
+    ├── 04_eval/                 # adapter evaluation outputs
+    ├── 05_cliff_count/          # post-training cliff-count evaluation
+    └── logs/
+</div></code></pre>
+<hr>
+<h2 id="%F0%9F%9B%A0%EF%B8%8F-standalone-environment-setup">🛠️ Standalone Environment Setup</h2>
+<p>After splitting <code>cliff_token_code/</code> into its own repository, run every command from the new repo root. No parent <code>/workspace</code> path or external <code>PYTHONPATH</code> is required.</p>
+<p>Tested with Python 3.10, CUDA 12.x, NVIDIA driver 535+, PyTorch 2.6, and vLLM 0.8.4.</p>
+<pre class="hljs"><code><div>git <span class="hljs-built_in">clone</span> &lt;repo-url&gt; cliff-token-code
+<span class="hljs-built_in">cd</span> cliff-token-code
+
+conda create -n cliff python=3.10 -y
+conda activate cliff
+pip install -r requirements.txt
+</div></code></pre>
+<p>For gated Llama/Gemma models:</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">export</span> HF_TOKEN=hf_xxx
+</div></code></pre>
+<p>Select the GPU used for generation, rollout, and training:</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">export</span> GPU_IDS=7
+<span class="hljs-built_in">export</span> CUDA_VISIBLE_DEVICES=7
+</div></code></pre>
+<p>All generated artifacts stay inside repo-local <code>model/</code>, <code>data/input/</code>, and <code>output/</code> directories.</p>
+<hr>
+<h2 id="%F0%9F%9A%80-quick-reproduction">🚀 Quick Reproduction</h2>
+<p>Run commands from the repository root.</p>
+<h3 id="1-download-models">1. Download Models</h3>
+<p>The paper evaluates seven instruction-tuned models across model families and scales.</p>
+<pre class="hljs"><code><div>python -m src.utils.download_models --hf_token <span class="hljs-string">"<span class="hljs-variable">$HF_TOKEN</span>"</span>
+</div></code></pre>
+<p>Paper model aliases:</p>
+<pre class="hljs"><code><div>qwen3-0.6b, qwen3-4b, qwen3-8b,
+llama-3.2-1b, llama-3.2-3b, llama-3.1-8b,
+gemma-3-4b
+</div></code></pre>
+<p>Download a smaller subset if needed:</p>
+<pre class="hljs"><code><div>python -m src.utils.download_models --model qwen3-0.6b qwen3-4b qwen3-8b
+</div></code></pre>
+<h3 id="2-download-datasets">2. Download Datasets</h3>
+<p>The analysis uses GSM1K, MATH500, and AIME 2025. GSM8K is used for Cliff-DPO training.</p>
+<pre class="hljs"><code><div>python -m src.utils.download_datasets --dataset gsm1k math500 aime25
+python -m src.utils.download_datasets --dataset gsm8k
+</div></code></pre>
+<h3 id="3-build-paper-subsets">3. Build Paper Subsets</h3>
+<p>The paper uses subsampling to make token-wise rollout analysis computationally feasible.</p>
+<pre class="hljs"><code><div>python -m src.utils.create_subsets --seed 42
+</div></code></pre>
+<p>This creates:</p>
+<ul>
+<li><code>gsm1k_100</code>: 100 GSM1K problems sampled with seed 42</li>
+<li><code>math500_100</code>: 100 MATH500 problems, level-stratified with seed 42</li>
+<li><code>aime25</code>: all 30 AIME 2025 problems</li>
+</ul>
+<hr>
+<h2 id="%F0%9F%A7%A0-core-pipeline">🧠 Core Pipeline</h2>
+<h3 id="4-generate-reasoning-traces">4. Generate Reasoning Traces</h3>
+<p>Generate one sampled trace per model-problem pair for the cliff-token analysis.</p>
+<pre class="hljs"><code><div>bash scripts/run_inference.sh \
+  --model qwen3-0.6b \
+  --dataset gsm1k_100,math500_100,aime25 \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --output_dir output/01_inference
+</div></code></pre>
+<p>Run all paper models sequentially on one GPU:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">for</span> model <span class="hljs-keyword">in</span> qwen3-0.6b qwen3-4b qwen3-8b llama-3.2-1b llama-3.2-3b llama-3.1-8b gemma-3-4b; <span class="hljs-keyword">do</span>
+  bash scripts/run_inference.sh \
+    --model <span class="hljs-string">"<span class="hljs-variable">$model</span>"</span> \
+    --dataset gsm1k_100,math500_100,aime25 \
+    --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+    --output_dir output/01_inference
+<span class="hljs-keyword">done</span>
+</div></code></pre>
+<p>Optional token-level logprob/rank/entropy stats for taxonomy and entropy analyses:</p>
+<pre class="hljs"><code><div>python3 scripts/_compute_token_stats.py \
+  --gpu <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --<span class="hljs-built_in">source</span> output/01_inference \
+  --output_dir output/02_token_stats \
+  --skip-existing
+</div></code></pre>
+<h3 id="5-estimate-token-wise-potential">5. Estimate Token-Wise Potential</h3>
+<p>Estimate token-wise potential with rollout sampling. The paper uses <code>N=64</code> rollouts per token position and early termination after irrecoverable potential-zero regions.</p>
+<pre class="hljs"><code><div>bash scripts/run_rollout.sh \
+  --model qwen3-0.6b \
+  --dataset gsm1k_100 \
+  --data_path output/01_inference/Qwen3-0.6B/gsm1k_100_all_paths.json \
+  --rollout_samples 64 \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --output_dir output/03_rollout/Qwen3-0.6B
+</div></code></pre>
+<p>Repeat rollout for each model/dataset pair you want to analyze.</p>
+<h3 id="6-analyze-cliff-tokens">6. Analyze Cliff Tokens</h3>
+<p>RQ1: cliff occurrence and failure-trigger behavior.</p>
+<pre class="hljs"><code><div>bash scripts/run_exp1_occurrence.sh \
+  --rollout_dir output/03_rollout \
+  --datasets gsm1k_100,math500_100,aime25 \
+  --output_dir output/04_cliff_occurrence/paper
+</div></code></pre>
+<p>Cliff-del vs. Cliff-keep pass@k ablations:</p>
+<pre class="hljs"><code><div>bash scripts/run_exp1_deletion.sh \
+  --rollout_dir output/03_rollout \
+  --datasets gsm1k_100,math500_100,aime25 \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --output_dir output/05_deletion_ablation/paper_batch
+</div></code></pre>
+<p>RQ2: entropy/rank behavior and cliff taxonomy:</p>
+<pre class="hljs"><code><div>bash scripts/run_exp3_entropy.sh \
+  --rollout_dir output/03_rollout \
+  --baseline_dir output/02_token_stats \
+  --datasets gsm1k_100,math500_100,aime25 \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --output_dir output/06_entropy_rank/paper_batch
+</div></code></pre>
+<p>RQ2/RQ3: candidate replacement and cross-model cliff probability mass shift:</p>
+<pre class="hljs"><code><div>bash scripts/run_exp4_candidates_all_models.sh \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --parallel_mode auto
+
+bash scripts/run_exp5_cpm_shift.sh \
+  --sources qwen3-0.6b,qwen3-8b \
+  --evals qwen3-0.6b,qwen3-8b \
+  --datasets gsm1k_100,math500_100,aime25 \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --output_dir output/08_cpm_shift/qwen_small_big_batch
+</div></code></pre>
+<hr>
+<h2 id="%F0%9F%A7%97-cliff-dpo">🧗 Cliff-DPO</h2>
+<p>Cliff-DPO is single-token preference optimization at identified cliff positions. It applies a DPO-style objective only to candidate tokens at the cliff position, comparing a non-cliff candidate token against the original cliff token at the same prefix.</p>
+<h3 id="1-candidate-rollout">1. Candidate Rollout</h3>
+<p>At each cliff position, evaluate top-k candidate tokens by rollout-estimated token-wise potential.</p>
+<pre class="hljs"><code><div>bash scripts/run_dpo_rollout.sh \
+  --model qwen3-0.6b \
+  --dataset gsm8k \
+  --data_path output/03_rollout/Qwen3-0.6B/gsm8k_all_paths.json \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --k_candidates 10 \
+  --num_samples 64
+</div></code></pre>
+<h3 id="2-build-preference-pairs">2. Build Preference Pairs</h3>
+<pre class="hljs"><code><div>python -m src.dpo.build_dpo_pairs \
+  --candidates_path output/09_cliff_dpo/01_candidates/Qwen3-0.6B/gsm8k_cliff_candidates.json \
+  --output_dir output/09_cliff_dpo/02_pairs/Qwen3-0.6B \
+  --strategy cliff_1N \
+  --category_ablations
+</div></code></pre>
+<h3 id="3-train">3. Train</h3>
+<p>Train the five paper Cliff-DPO variants: deterministic, uncertain, sampled-off, uncertain+sampled-off, and all.</p>
+<pre class="hljs"><code><div>bash scripts/run_dpo_train.sh \
+  --suite \
+  --model ./model/Qwen3-0.6B \
+  --dataset gsm8k \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span> \
+  --wandb_mode disabled
+</div></code></pre>
+<h3 id="4-evaluate">4. Evaluate</h3>
+<pre class="hljs"><code><div>python -m src.dpo.evaluate \
+  --model ./model/Qwen3-0.6B \
+  --adapter_paths none \
+    output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_all \
+    output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_deterministic_only \
+    output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_uncertainty_only \
+    output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_sampled_off_only \
+    output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_uncertainty_sampled_off_only \
+  --labels Baseline Cliff-all Cliff-deterministic Cliff-uncertainty Cliff-sampled-off Cliff-uncertainty-sampled-off \
+  --datasets gsm8k gsm1k_100 math500_100 aime25 \
+  --gpus <span class="hljs-string">"<span class="hljs-variable">$GPU_IDS</span>"</span>
+</div></code></pre>
+<hr>
+<h2 id="%F0%9F%96%BC%EF%B8%8F-figures">🖼️ Figures</h2>
+<p>Two figure paths are included:</p>
+<ul>
+<li>📄 <code>paper_images/</code>: exact PDFs used in the paper</li>
+<li>📊 <code>figure/</code>: notebook, reduced data, and generated PNG/PDF outputs</li>
+</ul>
+<p>Regenerate figures:</p>
+<pre class="hljs"><code><div>jupyter nbconvert --to notebook --execute figure/figure_revision.ipynb \
+  --output figure_revision.executed.ipynb \
+  --ExecutePreprocessor.timeout=-1
+</div></code></pre>
+<hr>
+<h2 id="%F0%9F%93%84-license">📄 License</h2>
+<p>The code in this repository is released under the MIT License; see <code>LICENSE</code>.</p>
+<p>Downloaded model weights, datasets, and benchmark contents are governed by their original upstream licenses and terms of use. In particular, Llama and Gemma require accepting their HuggingFace license terms before download.</p>
+<hr>
+<h2 id="%F0%9F%93%9A-citation">📚 Citation</h2>
+<pre class="hljs"><code><div>@article{clifftokens2026,
+  title = {Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning},
+  year = {2026}
+}
+</div></code></pre>
+
+</body>
+
+</html>
