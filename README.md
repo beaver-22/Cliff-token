@@ -5,9 +5,19 @@ Official reproduction code for **Cliff Tokens: Identifying Single-Token Failure 
 This work identifies the **precise token** that triggers a trace-level shift toward failure. We call this token a **cliff token**: a token where the **token-wise potential** drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.
 
 <p align="center">
-  <a href="paper_images/main_figure.pdf"><strong>📄 Main figure</strong></a>
-  &nbsp;·&nbsp;
-  <a href="paper_images/fig16_passk_incorrect.pdf"><strong>📊 Representative result: Cliff-del vs. Cliff-keep</strong></a>
+  <img src="paper_images/main_figure.png" alt="Cliff Tokens main figure" width="900">
+</p>
+
+<p align="center">
+  <a href="paper_images/main_figure.pdf">Main figure PDF</a>
+</p>
+
+<p align="center">
+  <img src="paper_images/fig16_passk_incorrect.png" alt="Cliff-del vs. Cliff-keep representative result" width="900">
+</p>
+
+<p align="center">
+  <a href="paper_images/fig16_passk_incorrect.pdf">Representative result PDF</a>
 </p>
 
 ---
