@@ -4,9 +4,11 @@
 
 📃 **Paper Link**: Coming soon
 
-**Jaeyong Ko**¹, **Pilsung Kang**¹, **Yukyung Lee**²
+**Jaeyong Ko**¹, **Pilsung Kang**¹, **Yukyung Lee**²†
 
 ¹Seoul National University, ²Boston University
+
+†Corresponding author
 
 </div>
 
