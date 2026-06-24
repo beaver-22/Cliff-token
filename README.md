@@ -253,8 +253,10 @@ Downloaded model weights, datasets, and benchmark contents are governed by their
 ## 📚 Citation
 
 ```bibtex
-@article{clifftokens2026,
-  title = {Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning},
-  year = {2026}
+@article{ko2026clifftoken,
+  title={Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning},
+  author={Ko, Jaeyong and Kang, Pilsung and Lee, Yukyung},
+  journal={arXiv preprint},
+  year={2026}
 }
 ```
