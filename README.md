@@ -96,7 +96,7 @@ pip install -r requirements.txt
 ### Prepare
 
 ```bash
-export GPU_IDS=7
+export GPU_IDS=0
 export CUDA_VISIBLE_DEVICES="$GPU_IDS"
 export HF_TOKEN=hf_xxx  # for gated Llama/Gemma models
 
