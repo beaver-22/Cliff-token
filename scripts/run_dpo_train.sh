@@ -92,7 +92,7 @@ MODEL_PATH=$(python3 -c "import src.config as config; print(config.resolve_model
 MODEL_SHORT=$(python3 -c "import src.config as config; print(config.get_model_short_name(config.resolve_model_path('$MODEL')))")
 
 # Optional GPU pinning for Step 4 training/eval.
-# Example: --gpus 0 -> CUDA_VISIBLE_DEVICES=7
+# Example: --gpus 7 -> CUDA_VISIBLE_DEVICES=7
 if [[ -n "$GPU_LIST" ]]; then
     export CUDA_VISIBLE_DEVICES="$GPU_LIST"
 fi

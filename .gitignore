@@ -67,3 +67,6 @@ temp/
 # - figure/data/
 # - figure/output/
 # - figure/output_recovery/
+
+# Local README previews
+README_tmp.html

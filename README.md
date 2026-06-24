@@ -1,47 +1,47 @@
-# 🧗 Cliff Tokens
+<div align="center">
 
-Official reproduction code for **Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning**.
+# Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning
+
+📃 **Paper Link**: Coming soon
+
+**Jaeyong Ko**¹, **Pilsung Kang**¹, **Yukyung Lee**²
+
+¹Seoul National University, ²Boston University
+
+</div>
 
 <p align="center">
   <img src="paper_images/main_figure.png" alt="Cliff Tokens main figure" width="900">
 </p>
 
-This work identifies the **precise token** that triggers a trace-level shift toward failure. We call this token a **cliff token**: a token where the **token-wise potential** drops significantly under an adaptive threshold based on a one-sided two-proportion z-test.
+<div align="center">
+<sub><i>Overview of Cliff Tokens. We estimate token-wise potential with rollouts and identify the precise token where a reasoning trace shifts toward failure under an adaptive one-sided z-test threshold.</i></sub>
+</div>
+
+## Abstract
+
+Large language models (LLMs) reach high accuracy in mathematical reasoning, but individual traces on the same problem diverge; some arrive at the correct answer while others fail. Prior work analyzes failure at the step, chunk, or sentence level, or at tokens where failure has already occurred. Neither identifies the precise token that triggers the shift toward failure. We introduce the **cliff token**, a token where the token-wise potential drops significantly under an adaptive threshold that scales with the local token-wise potential, based on a one-sided two-proportion z-test. Across seven models and three mathematical reasoning benchmarks (GSM1K, MATH500, AIME 2025), cliff tokens act as failure triggers; deleting the first cliff token and resampling recovers pass@64 to 1.0, while keeping it limits recovery to 0.71–1.00. We further introduce a cliff taxonomy of deterministic, uncertain, and sampled-off cliffs, defined by greedy choice and token entropy. Each type has distinct probabilistic characteristics, and the taxonomy generalizes across model scales. Finally, we validate the taxonomy via single-token preference optimization at cliff positions (Cliff-DPO). Trained on GSM8K, Cliff-DPO improves accuracy across benchmarks by up to +6.6. Optimizing at uncertain and sampled-off cliffs improves reasoning, while deterministic cliffs do not.
 
 
-
----
-
-## 🔍 Paper in Brief
+## Paper in Brief
 
 - **Token-Wise Potential.** The probability that a reasoning process reaches the correct answer, given the partial trace up to token position `t`.
 - **Cliff Token.** A token whose rollout-estimated potential drops significantly under the adaptive threshold `Δ_t > 0.1 + 1.645 · SE_t`.
 - **RQ1. Failure Trigger.** Cliff tokens occur more often in incorrect traces; deleting the first cliff token (`Cliff-del`) restores reasoning more reliably than continuing from it (`Cliff-keep`).
 - **RQ2. Cliff Taxonomy.** Cliff tokens are categorized by greedy choice and token entropy into deterministic, uncertain, and sampled-off cliffs.
 - **RQ3. Family and Scale Effects.** Deterministic cliffs are largely scale-invariant, uncertain cliffs expose model-specific knowledge gaps, and sampled-off cliffs show scale-asymmetry.
-- **Cliff-DPO.** Single-token preference optimization at cliff positions improves reasoning when trained on uncertain and sampled-off cliffs, while deterministic cliffs are less effective.
+- **Cliff-DPO.** Single-token preference optimization at cliff positions improves reasoning when trained on uncertain and sampled-off cliffs, while deterministic cliffs do not.
 
 <p align="center">
   <img src="paper_images/fig16_passk_incorrect.png" alt="Cliff-del vs. Cliff-keep representative result" width="900">
 </p>
 
-**RQ1. Failure Trigger** experiment compares continuing from the first cliff token (`Cliff-keep`) against deleting it and resuming generation (`Cliff-del`), showing that failures are often recoverable from a single cliff-token deletion.
+<div align="center">
+<sub><i>RQ1. Failure Trigger. Cliff-del removes the first cliff token and resamples, while Cliff-keep continues from the fixed cliff token. The recovery gap shows that a single cliff token can trigger reasoning failure.</i></sub>
+</div>
 
----
-
-## ✨ What This Repo Reproduces
-
-- **Cliff Token Detection** from generated mathematical reasoning traces
-- **Token-Wise Potential** estimation with rollout sampling
-- **Adaptive Z-Test Thresholding** for statistically significant potential drops
-- **Cliff Taxonomy** into deterministic, uncertain, and sampled-off cases
-- **CPM Shift Analysis** across model families and scales
-- **Cliff-DPO** data construction, training, and evaluation
-- **Paper Figures** from preserved PDFs and regenerable figure code
-
----
-
-## 📦 Repository Layout
+## Project Structure
+### Repository Layout
 
 ```text
 .
@@ -54,17 +54,8 @@ This work identifies the **precise token** that triggers a trace-level shift tow
 └── LICENSE
 ```
 
-Generated artifacts are intentionally ignored by git:
 
-```text
-model/        # downloaded model weights
-data/input/   # downloaded datasets and generated subsets
-output/       # inference, rollout, analysis, and training outputs
-```
-
-## 🗂️ Output Layout
-
-Experiment outputs are named in paper-reproduction order. Wrappers use these paths by default unless `--output_dir` or the corresponding input root is provided.
+### Output Layout
 
 ```text
 output/
@@ -85,92 +76,38 @@ output/
     └── logs/
 ```
 
----
 
-## 🛠️ Env Setup
-
-Tested with Python 3.10, CUDA 12.x, NVIDIA driver 535+, PyTorch 2.6, and vLLM 0.8.4.
+## 🛠️ Installation
 
 ```bash
-git clone <repo-url> cliff-token-code
-cd cliff-token-code
-
+git clone https://github.com/beaver-22/Cliff-token.git
+cd Cliff-token
+```
+### Env Setup
+```bash
 conda create -n cliff python=3.10 -y
 conda activate cliff
 pip install -r requirements.txt
 ```
 
-For gated Llama/Gemma models:
 
-```bash
-export HF_TOKEN=hf_xxx
-```
+## 🚀 Reproduction
 
-Select the GPU used for generation, rollout, and training:
+### Prepare
 
 ```bash
 export GPU_IDS=7
-export CUDA_VISIBLE_DEVICES=7
-```
+export CUDA_VISIBLE_DEVICES="$GPU_IDS"
+export HF_TOKEN=hf_xxx  # for gated Llama/Gemma models
 
-All generated artifacts stay inside repo-local `model/`, `data/input/`, and `output/` directories.
-
----
-
-## 🚀 Quick Reproduction
-
-### 1. Download Models
-
-The paper evaluates seven instruction-tuned models across model families and scales.
-
-```bash
 python -m src.utils.download_models --hf_token "$HF_TOKEN"
-```
-
-Paper model aliases:
-
-```text
-qwen3-0.6b, qwen3-4b, qwen3-8b,
-llama-3.2-1b, llama-3.2-3b, llama-3.1-8b,
-gemma-3-4b
-```
-
-Download a smaller subset if needed:
-
-```bash
-python -m src.utils.download_models --model qwen3-0.6b qwen3-4b qwen3-8b
-```
-
-### 2. Download Datasets
-
-The analysis uses GSM1K, MATH500, and AIME 2025. GSM8K is used for Cliff-DPO training.
-
-```bash
-python -m src.utils.download_datasets --dataset gsm1k math500 aime25
-python -m src.utils.download_datasets --dataset gsm8k
-```
-
-### 3. Build Paper Subsets
-
-The paper uses subsampling to make token-wise rollout analysis computationally feasible.
-
-```bash
+python -m src.utils.download_datasets --dataset gsm1k math500 aime25 gsm8k
 python -m src.utils.create_subsets --seed 42
 ```
 
-This creates:
+### Inference and Rollout
 
-- `gsm1k_100`: 100 GSM1K problems sampled with seed 42
-- `math500_100`: 100 MATH500 problems, level-stratified with seed 42
-- `aime25`: all 30 AIME 2025 problems
-
----
-
-## 🧠 Core Pipeline
-
-### 4. Generate Reasoning Traces
-
-Generate one sampled trace per model-problem pair for the cliff-token analysis.
+1. Generate sampled reasoning traces for the target model and datasets.
 
 ```bash
 bash scripts/run_inference.sh \
@@ -180,20 +117,7 @@ bash scripts/run_inference.sh \
   --output_dir output/01_inference
 ```
 
-Run all paper models sequentially on one GPU:
-
-```bash
-for model in qwen3-0.6b qwen3-4b qwen3-8b llama-3.2-1b llama-3.2-3b llama-3.1-8b gemma-3-4b; do
-  bash scripts/run_inference.sh \
-    --model "$model" \
-    --dataset gsm1k_100,math500_100,aime25 \
-    --gpus "$GPU_IDS" \
-    --output_dir output/01_inference
-done
-```
-
-Optional token-level logprob/rank/entropy stats for taxonomy and entropy analyses:
-
+2. Compute token-level logprob, rank, and entropy statistics
 ```bash
 python3 scripts/_compute_token_stats.py \
   --gpu "$GPU_IDS" \
@@ -202,9 +126,7 @@ python3 scripts/_compute_token_stats.py \
   --skip-existing
 ```
 
-### 5. Estimate Token-Wise Potential
-
-Estimate token-wise potential with rollout sampling. The paper uses `N=64` rollouts per token position and early termination after irrecoverable potential-zero regions.
+3. Estimate token-wise potential by rollout sampling. The paper uses `N=64` rollouts per token position.
 
 ```bash
 bash scripts/run_rollout.sh \
@@ -216,11 +138,10 @@ bash scripts/run_rollout.sh \
   --output_dir output/03_rollout/Qwen3-0.6B
 ```
 
-Repeat rollout for each model/dataset pair you want to analyze.
 
-### 6. Analyze Cliff Tokens
+### Analysis
 
-RQ1: cliff occurrence and failure-trigger behavior.
+RQ1 measures cliff occurrence and tests whether the first cliff token is a failure trigger.
 
 ```bash
 bash scripts/run_exp1_occurrence.sh \
@@ -228,9 +149,6 @@ bash scripts/run_exp1_occurrence.sh \
   --datasets gsm1k_100,math500_100,aime25 \
   --output_dir output/04_cliff_occurrence/paper
 ```
-
-Cliff-del vs. Cliff-keep pass@k ablations:
-
 ```bash
 bash scripts/run_exp1_deletion.sh \
   --rollout_dir output/03_rollout \
@@ -239,7 +157,7 @@ bash scripts/run_exp1_deletion.sh \
   --output_dir output/05_deletion_ablation/paper_batch
 ```
 
-RQ2: entropy/rank behavior and cliff taxonomy:
+RQ2 analyzes entropy/rank behavior and assigns deterministic, uncertain, or sampled-off cliff categories.
 
 ```bash
 bash scripts/run_exp3_entropy.sh \
@@ -250,13 +168,15 @@ bash scripts/run_exp3_entropy.sh \
   --output_dir output/06_entropy_rank/paper_batch
 ```
 
-RQ2/RQ3: candidate replacement and cross-model cliff probability mass shift:
+RQ2/RQ3 evaluate candidate replacement and cross-model cliff probability mass shift.
 
 ```bash
 bash scripts/run_exp4_candidates_all_models.sh \
   --gpus "$GPU_IDS" \
   --parallel_mode auto
+```
 
+```bash
 bash scripts/run_exp5_cpm_shift.sh \
   --sources qwen3-0.6b,qwen3-8b \
   --evals qwen3-0.6b,qwen3-8b \
@@ -265,15 +185,10 @@ bash scripts/run_exp5_cpm_shift.sh \
   --output_dir output/08_cpm_shift/qwen_small_big_batch
 ```
 
----
 
 ## 🧗 Cliff-DPO
 
-Cliff-DPO is single-token preference optimization at identified cliff positions. It applies a DPO-style objective only to candidate tokens at the cliff position, comparing a non-cliff candidate token against the original cliff token at the same prefix.
-
 ### 1. Candidate Rollout
-
-At each cliff position, evaluate top-k candidate tokens by rollout-estimated token-wise potential.
 
 ```bash
 bash scripts/run_dpo_rollout.sh \
@@ -297,8 +212,6 @@ python -m src.dpo.build_dpo_pairs \
 
 ### 3. Train
 
-Train the five paper Cliff-DPO variants: deterministic, uncertain, sampled-off, uncertain+sampled-off, and all.
-
 ```bash
 bash scripts/run_dpo_train.sh \
   --suite \
@@ -312,7 +225,7 @@ bash scripts/run_dpo_train.sh \
 
 ```bash
 python -m src.dpo.evaluate \
-  --model ./model/Qwen3-0.6B \
+  --model qwen3-0.6b \
   --adapter_paths none \
     output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_all \
     output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_deterministic_only \
@@ -320,28 +233,12 @@ python -m src.dpo.evaluate \
     output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_sampled_off_only \
     output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_uncertainty_sampled_off_only \
   --labels Baseline Cliff-all Cliff-deterministic Cliff-uncertainty Cliff-sampled-off Cliff-uncertainty-sampled-off \
-  --datasets gsm8k gsm1k_100 math500_100 aime25 \
-  --gpus "$GPU_IDS"
+  --full_suite \
+  --token_profile paper \
+  --aime_samples 64 \
+  --gpus "$GPU_IDS" \
+  --output_dir output/09_cliff_dpo/04_eval/Qwen3-0.6B
 ```
-
----
-
-## 🖼️ Figures
-
-Two figure paths are included:
-
-- 📄 `paper_images/`: exact PDFs used in the paper
-- 📊 `figure/`: notebook, reduced data, and generated PNG/PDF outputs
-
-Regenerate figures:
-
-```bash
-jupyter nbconvert --to notebook --execute figure/figure_revision.ipynb \
-  --output figure_revision.executed.ipynb \
-  --ExecutePreprocessor.timeout=-1
-```
-
----
 
 
 ## 📄 License
@@ -350,7 +247,6 @@ The code in this repository is released under the MIT License; see `LICENSE`.
 
 Downloaded model weights, datasets, and benchmark contents are governed by their original upstream licenses and terms of use. In particular, Llama and Gemma require accepting their HuggingFace license terms before download.
 
----
 
 ## 📚 Citation
 
