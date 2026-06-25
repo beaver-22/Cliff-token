@@ -2,7 +2,7 @@
 
 # Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning
 
-📃 **Paper Link**: Coming soon
+📃 [Paper Link (arXiv)](https://arxiv.org/abs/2606.25524)
 
 **Jaeyong Ko**¹, **Pilsung Kang**¹, **Yukyung Lee**²†
 
@@ -256,7 +256,9 @@ Downloaded model weights, datasets, and benchmark contents are governed by their
 @article{ko2026clifftoken,
   title={Cliff Tokens: Identifying Single-Token Failure Triggers in LLM Mathematical Reasoning},
   author={Ko, Jaeyong and Kang, Pilsung and Lee, Yukyung},
-  journal={arXiv preprint},
-  year={2026}
+  journal={arXiv preprint arXiv:2606.25524},
+  year={2026},
+  eprint={2606.25524},
+  archivePrefix={arXiv}
 }
 ```
