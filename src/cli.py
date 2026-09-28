@@ -2,17 +2,15 @@
 """
 Cliff Token Analysis (CTA) CLI
 
-Main entry point for running inference, rollout, and analysis experiments.
+Main entry point for generating stem traces and rollouts.
 
 Commands:
-- inference: Generate reasoning paths (Stage 1)
-- rollout:   Compute tokenwise potential via rollout sampling (Stage 2)
-- experiment: Run analysis experiments (RQ1-1, RQ1-2, RQ1-3)
+- inference: Generate stem traces (Stage 1)
+- rollout:   Estimate token-wise success probability via rollouts (Stage 2)
 
 Usage:
-    python -m src.cli inference --model qwen3-4b --dataset math500 --num_problems 500
-    python -m src.cli rollout --data_path ./output/.../math500_all_paths.json --model qwen3-4b
-    python -m src.cli experiment --experiment rq1_1 --data_path ./output/.../math500_all_paths.json
+    python -m src.cli inference --model qwen3-4b --dataset math500_100 --num_problems 100
+    python -m src.cli rollout --data_path ./output/01_stem_traces/.../math500_100_all_paths.json --model qwen3-4b
 """
 
 import json
@@ -218,11 +216,11 @@ def cmd_inference(args):
 
 
 # =============================================================================
-# Stage 2: Rollout (Compute Tokenwise Potential)
+# Stage 2: Rollout (Estimate Token-wise Success Probability)
 # =============================================================================
 
 def cmd_rollout(args):
-    """Compute tokenwise potential via rollout sampling."""
+    """Estimate token-wise success probability via rollout sampling."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     model_path = config.resolve_model_path(args.model)
@@ -231,7 +229,7 @@ def cmd_rollout(args):
     if args.output_dir:
         output_dir = Path(args.output_dir)
     else:
-        output_dir = Path(config.OUTPUT_DIR) / "03_rollout" / model_short
+        output_dir = Path(config.OUTPUT_DIR) / "03_rollouts" / model_short
     output_dir.mkdir(parents=True, exist_ok=True)
     mode = args.mode or config.get_default_mode(model_path)
     temperature = getattr(args, 'temperature', None)
@@ -244,7 +242,7 @@ def cmd_rollout(args):
     early_termination_k = getattr(args, 'early_termination_k', config.EARLY_TERMINATION_K)
 
     print("=" * 60)
-    print("STAGE 2: ROLLOUT (Compute Tokenwise Potential)")
+    print("STAGE 2: ROLLOUT (Estimate Token-wise Success Probability)")
     print("=" * 60)
     print(f"Model:          {model_path}")
     print(f"Data:           {args.data_path}")
@@ -318,7 +316,7 @@ def cmd_rollout(args):
         lora_request = LoRARequest("adapter", 1, adapter_path)
 
     checkpoint_path = str(output_dir / f"{args.dataset}_checkpoint.jsonl")
-    print(f"\nComputing tokenwise potential ({args.rollout_samples} rollouts/position, rollout_max_tokens={config.get_rollout_max_tokens(args.dataset, mode)})...")
+    print(f"\nComputing token-wise success probability ({args.rollout_samples} rollouts/position, rollout_max_tokens={config.get_rollout_max_tokens(args.dataset, mode)})...")
     print(f"Checkpoint: {checkpoint_path}")
     monitor.start()
     paths = compute_position_scores(
@@ -357,123 +355,6 @@ def cmd_rollout(args):
     print(f"  Success:   {len(success_dicts)}")
     print(f"  Failure:   {len(failure_dicts)}")
     print(f"\nOutput: {output_dir}")
-    print(f"\nNext step:")
-    print(f"  python -m src.cli experiment --experiment rq1_1 --data_path {output_dir / f'{args.dataset}_all_paths.json'}")
-
-
-# =============================================================================
-# Experiments (Analysis — Phase 2)
-# =============================================================================
-
-def cmd_experiment(args):
-    """Run Cliff Token Analysis experiments on pre-computed rollout data."""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    model_path = config.resolve_model_path(args.model)
-    model_short = config.get_model_short_name(model_path)
-    output_dir = Path(args.output_dir) / f"experiment_{model_short}_{args.dataset}_{timestamp}"
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    print("=" * 60)
-    print("CLIFF TOKEN ANALYSIS EXPERIMENTS")
-    print("=" * 60)
-    print(f"Experiment: {args.experiment}")
-    print(f"Data:       {args.data_path}")
-    print(f"Output:     {output_dir}")
-    print()
-
-    print("Loading data...")
-    all_paths = load_json(args.data_path)
-    success_paths = [p for p in all_paths if p["is_correct"]]
-    failure_paths = [p for p in all_paths if not p["is_correct"]]
-    print(f"Loaded {len(all_paths)} paths (Success: {len(success_paths)}, Failure: {len(failure_paths)})")
-
-    sample_path = all_paths[0] if all_paths else {}
-    has_scores = len(sample_path.get("all_position_scores", [])) > 0
-    if not has_scores:
-        print("\nWARNING: No tokenwise potential found. Run 'rollout' first.")
-
-    save_json(vars(args), str(output_dir / "experiment_config.json"), indent=2)
-
-    VALID = ["rq1_1", "rq1_2", "rq1_3", "all"]
-    if args.experiment not in VALID:
-        print(f"Unknown experiment '{args.experiment}'. Valid: {VALID}")
-        return
-
-    # --- RQ1-1: Cliff token occurrence in success vs failure paths ---
-    if args.experiment in ["all", "rq1_1"]:
-        try:
-            from src.analysis.curves import run_experiment1_analysis, plot_sample_curves
-            exp_dir = output_dir / "rq1_1_cliff_occurrence"
-            exp_dir.mkdir(parents=True, exist_ok=True)
-            print("\n" + "=" * 60)
-            print("RQ1-1: Cliff Token Occurrence (Success vs Failure)")
-            print("=" * 60)
-            run_experiment1_analysis(success_paths, failure_paths, str(exp_dir))
-            plot_sample_curves(success_paths, failure_paths, str(exp_dir))
-        except ImportError:
-            print("\n[RQ1-1] src/analysis/curves.py not yet available (Phase 2).")
-
-    # --- RQ1-2: Cliff token vs Critical token positional analysis ---
-    if args.experiment in ["all", "rq1_2"]:
-        try:
-            from src.analysis.positional import (
-                run_experiment2_analysis, print_experiment2_summary, create_all_visualizations
-            )
-            exp_dir = output_dir / "rq1_2_positional"
-            exp_dir.mkdir(parents=True, exist_ok=True)
-            print("\n" + "=" * 60)
-            print("RQ1-2: Cliff Token vs Critical Token Positional Analysis")
-            print("=" * 60)
-            results = run_experiment2_analysis(failure_paths, str(exp_dir))
-            print_experiment2_summary(results)
-            create_all_visualizations(failure_paths, str(exp_dir))
-        except ImportError:
-            print("\n[RQ1-2] src/analysis/positional.py not yet available (Phase 2).")
-
-    # --- RQ1-3: Cliff-del vs Critical-del decoding comparison ---
-    if args.experiment in ["all", "rq1_3"]:
-        try:
-            from src.decoding.cliff import run_cliff_del_on_paths, cliff_del_results_to_dicts
-            from src.decoding.critical import run_critical_del_on_paths, critical_del_results_to_dicts
-            from src.decoding.evaluator import run_experiment3_evaluation, print_experiment3_summary
-            exp_dir = output_dir / "rq1_3_cliff_vs_critical"
-            exp_dir.mkdir(parents=True, exist_ok=True)
-            print("\n" + "=" * 60)
-            print("RQ1-3: Cliff-Del vs Critical-Del Decoding Comparison")
-            print("=" * 60)
-            mode = args.mode or config.get_default_mode(model_path)
-            gpu_list = [int(g) for g in args.gpus.split(",")]
-            llm = create_llm(model_path, gpu_list, config.GPU_MEMORY_UTILIZATION)
-            tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-
-            print("Running Cliff-Del decoding...")
-            cliff_results = run_cliff_del_on_paths(
-                llm, tokenizer, all_paths, args.dataset,
-                num_samples=args.num_regen_samples, mode=mode,
-                drop_threshold=args.cliff_threshold,
-            )
-            cliff_dicts = cliff_del_results_to_dicts(cliff_results)
-            save_json(cliff_dicts, str(exp_dir / "cliff_del_results.json"))
-
-            print("Running Critical-Del decoding...")
-            critical_results = run_critical_del_on_paths(
-                llm, tokenizer, all_paths, args.dataset,
-                num_samples=args.num_regen_samples, mode=mode,
-            )
-            critical_dicts = critical_del_results_to_dicts(critical_results)
-            save_json(critical_dicts, str(exp_dir / "critical_del_results.json"))
-
-            eval_results = run_experiment3_evaluation(
-                critical_dicts, cliff_dicts, str(exp_dir)
-            )
-            print_experiment3_summary(eval_results)
-        except ImportError:
-            print("\n[RQ1-3] src/decoding/ modules not yet available (Phase 2).")
-
-    print("\n" + "=" * 60)
-    print("EXPERIMENTS COMPLETE")
-    print("=" * 60)
-    print(f"Results saved to: {output_dir}")
 
 
 # =============================================================================
@@ -486,20 +367,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Commands:
-  inference   Generate reasoning paths (Stage 1)
-  rollout     Compute tokenwise potential (Stage 2)
-  experiment  Run Cliff Token analysis experiments
+  inference   Generate stem traces (Stage 1)
+  rollout     Estimate token-wise success probability (Stage 2)
 
 Examples:
   # Stage 1: Generate reasoning paths
   python -m src.cli inference --model qwen3-4b --dataset math500 --num_problems 500 --gpus 0,1
 
-  # Stage 2: Compute tokenwise potential
+  # Stage 2: Estimate token-wise success probability
   python -m src.cli rollout --model qwen3-4b --dataset math500 \\
       --data_path ./output/.../math500_all_paths.json --gpus 0,1
-
-  # Multi-GPU pipeline via script
-  scripts/run_data.sh --model qwen3-4b --dataset math500 --temperature 0.6 --gpus 0,1,2,3
         """
     )
 
@@ -543,7 +420,7 @@ Examples:
     # -------------------------------------------------------------------------
     # rollout
     # -------------------------------------------------------------------------
-    roll_parser = subparsers.add_parser("rollout", help="Compute tokenwise potential")
+    roll_parser = subparsers.add_parser("rollout", help="Estimate token-wise success probability")
     add_model_args(roll_parser)
     roll_parser.add_argument("--data_path", type=str, required=True,
                              help="Path to inference output (*_all_paths.json)")
@@ -551,35 +428,19 @@ Examples:
     roll_parser.add_argument("--rollout_samples", type=int, default=config.ROLLOUT_SAMPLES,
                              help=f"Rollout samples per token position (default: {config.ROLLOUT_SAMPLES})")
     roll_parser.add_argument("--rollout_window", type=int, default=config.ROLLOUT_WINDOW_SIZE,
-                             help="Compute potential every N tokens (default: 1 = every token)")
+                             help="Estimate success probability every N tokens (default: 1 = every token)")
     roll_parser.add_argument("--batch_size", type=int, default=config.BATCH_SIZE)
     roll_parser.add_argument("--global_batch_size", type=int, default=config.GLOBAL_BATCH_SIZE)
     roll_parser.add_argument("--max_grading_workers", type=int, default=config.MAX_GRADING_WORKERS)
     roll_parser.add_argument("--no_optimized", action="store_true",
                              help="Disable global batching (use legacy per-path mode)")
     roll_parser.add_argument("--failure_only", action="store_true",
-                             help="Only compute potential for failure paths")
+                             help="Only estimate success probability for incorrect traces")
     roll_parser.add_argument("--early_termination_k", type=int, default=config.EARLY_TERMINATION_K,
                              help=f"Stop path after K consecutive score=0.0 (default: {config.EARLY_TERMINATION_K}, 0=disabled)")
     roll_parser.add_argument("--adapter_path", type=str, default=None,
                              help="LoRA adapter directory. When set, vLLM serves the "
                                   "adapter natively via enable_lora + LoRARequest (no merge).")
-
-    # -------------------------------------------------------------------------
-    # experiment
-    # -------------------------------------------------------------------------
-    exp_parser = subparsers.add_parser("experiment", help="Run Cliff Token analysis experiments")
-    add_model_args(exp_parser)
-    exp_parser.add_argument("--experiment", type=str, default="rq1_1",
-                            choices=["all", "rq1_1", "rq1_2", "rq1_3"],
-                            help="Which experiment to run")
-    exp_parser.add_argument("--data_path", type=str, required=True,
-                            help="Path to rollout output (*_all_paths.json with potential)")
-    exp_parser.add_argument("--dataset", type=str, default=config.DATASET_NAME)
-    exp_parser.add_argument("--cliff_threshold", type=float, default=config.DEFAULT_CLIFF_THRESHOLD,
-                            help=f"Cliff token threshold (default: {config.DEFAULT_CLIFF_THRESHOLD})")
-    exp_parser.add_argument("--num_regen_samples", type=int, default=32,
-                            help="Regeneration samples for RQ1-3 decoding comparison")
 
     args = parser.parse_args()
 
@@ -593,8 +454,6 @@ Examples:
         cmd_inference(args)
     elif args.command == "rollout":
         cmd_rollout(args)
-    elif args.command == "experiment":
-        cmd_experiment(args)
 
 
 if __name__ == "__main__":

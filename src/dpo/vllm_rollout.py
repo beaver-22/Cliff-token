@@ -1,5 +1,5 @@
 """
-Step 1: Top-10 Candidate Extraction & Potential Rollout (Chunked + Resumable)
+Cliff-DPO candidate rollout: top-10 candidates at each cliff + success-probability rollout (chunked, resumable)
 
 Pipeline:
   Phase A — Extract Top-10 candidates at each cliff via logprobs (saved to phase_a.json).
@@ -14,8 +14,8 @@ the existing rollout data).
 
 Usage:
     python -m src.dpo.vllm_rollout \
-        --model qwen3-0.6b --dataset gsm8k \
-        --data_path ./output/03_rollout/Qwen3-0.6B/gsm8k_all_paths.json \
+        --model qwen3-0.6b --dataset gsm8k_train \
+        --data_path ./output/03_rollouts/Qwen3-0.6B/gsm8k_train_all_paths.json \
         --gpus 0 --chunk_size 10
 """
 
@@ -49,7 +49,7 @@ from src.utils.grader import batch_grade_responses_mathverify
 GREEDY_99_BOUND_NATS = GREEDY_BOUND_NATS  # legacy alias used within this module
 
 # Module-level logger (reconfigured in main())
-logger = logging.getLogger("dpo.step1_rollout")
+logger = logging.getLogger("dpo.candidate_rollout")
 
 
 # ============================================================
@@ -614,16 +614,16 @@ def run_full_pipeline(
 
 def _default_output_dir(model_path: str) -> str:
     model_short = config.get_model_short_name(model_path)
-    return f"./output/09_cliff_dpo/01_candidates/{model_short}"
+    return f"./output/07_cliff_dpo/01_candidates/{model_short}"
 
 
 def main():
     parser = argparse.ArgumentParser(description="DPO candidate rollout (chunked, resumable)")
     parser.add_argument("--model", required=True, help="Model alias or path")
-    parser.add_argument("--dataset", required=True, help="Dataset name (e.g. gsm8k)")
+    parser.add_argument("--dataset", required=True, help="Dataset name (e.g. gsm8k_train)")
     parser.add_argument("--data_path", required=True, help="Path to rollout all_paths.json")
     parser.add_argument("--output_dir", default=None,
-                        help="Output directory. Default: ./output/09_cliff_dpo/01_candidates/{model_short}/")
+                        help="Output directory. Default: ./output/07_cliff_dpo/01_candidates/{model_short}/")
     parser.add_argument("--mode", default="non_thinking", choices=["thinking", "non_thinking"])
     parser.add_argument("--gpus", default="0", help="Comma-separated GPU IDs")
     parser.add_argument("--k_candidates", type=int, default=10, help="Top-k candidates")
@@ -638,7 +638,7 @@ def main():
                         help="Total number of data-parallel shards. Paths are split via paths[shard_id::num_shards].")
     parser.add_argument("--merge_only", action="store_true",
                         help="Skip rollout; just merge existing per-shard partial files into the final output.")
-    parser.add_argument("--log_dir", default="./output/09_cliff_dpo/logs",
+    parser.add_argument("--log_dir", default="./output/07_cliff_dpo/logs",
                         help="Directory for log files")
     parser.add_argument("--log_level", default="INFO",
                         choices=["DEBUG", "INFO", "WARNING", "ERROR"])
@@ -650,7 +650,7 @@ def main():
 
     global logger
     logger = setup_logger(
-        name=f"step1_rollout_{config.get_model_short_name(model_path)}_{args.dataset}",
+        name=f"candidate_rollout_{config.get_model_short_name(model_path)}_{args.dataset}",
         log_dir=args.log_dir,
         level=parse_log_level(args.log_level),
     )

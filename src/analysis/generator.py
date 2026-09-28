@@ -645,7 +645,7 @@ def compute_position_scores_optimized(
 
     window_str = f", window={rollout_window}" if rollout_window > 1 else ""
     et_str = f", early_term_k={early_termination_k}" if early_termination_k > 0 else ""
-    print(f"Computing tokenwise potential ({rollout_samples} rollouts{window_str}{et_str}, {mode_str} mode)...")
+    print(f"Computing token-wise success probability ({rollout_samples} rollouts{window_str}{et_str}, {mode_str} mode)...")
 
     total_positions = sum(
         max(0, (len(p.response_token_ids) - 1 + rollout_window - 1) // rollout_window)

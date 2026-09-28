@@ -1,6 +1,6 @@
 """Statistical cliff token definition via two-proportion z-test.
 
-Cliff token = position where the estimated potential drop is statistically
+Cliff token = position where the estimated success-probability drop is statistically
 significant (one-sided two-proportion z-test against H0: drop ≤ δ_0).
 
 Test statistic:

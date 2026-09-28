@@ -30,9 +30,8 @@ DEFAULT_MODELS   = list(PAPER_MODEL_ALIASES)
 DEFAULT_DATASETS = ["gsm1k_100", "math500_100", "aime25"]
 
 
-def _kst_timestamp() -> str:
-    kst = datetime.timezone(datetime.timedelta(hours=9))
-    return datetime.datetime.now(kst).strftime("%m%d_%H%M%S")
+def _timestamp() -> str:
+    return datetime.datetime.now().strftime("%m%d_%H%M%S")
 
 
 # =============================================================================
@@ -369,7 +368,7 @@ def main():
     args = parser.parse_args()
 
     if args.output_dir is None:
-        args.output_dir = f"./output/inference_{_kst_timestamp()}"
+        args.output_dir = f"./output/inference_{_timestamp()}"
 
     model_pairs = [(alias, resolve_model_path(alias)) for alias in args.model]
 

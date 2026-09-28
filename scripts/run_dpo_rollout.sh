@@ -1,9 +1,9 @@
 #!/bin/bash
-# Cliff-DPO Step 1 Candidate Rollout Wrapper (chunked, resumable)
+# Cliff-DPO candidate rollout wrapper (chunked, resumable)
 #
 # Usage:
-#   bash scripts/run_dpo_rollout.sh --model qwen3-0.6b --dataset gsm8k \
-#       --data_path ./output/03_rollout/Qwen3-0.6B/gsm8k_all_paths.json \
+#   bash scripts/run_dpo_rollout.sh --model qwen3-0.6b --dataset gsm8k_train \
+#       --data_path ./output/03_rollouts/Qwen3-0.6B/gsm8k_train_all_paths.json \
 #       --gpus 0 --chunk_size 10
 
 set -euo pipefail
@@ -19,7 +19,7 @@ K_CANDIDATES=10
 NUM_SAMPLES=64
 CHUNK_SIZE=10
 FORCE=false
-LOG_DIR="./output/09_cliff_dpo/logs"
+LOG_DIR="./output/07_cliff_dpo/logs"
 LOG_LEVEL="INFO"
 
 usage() {
@@ -28,18 +28,18 @@ Usage: scripts/run_dpo_rollout.sh [options]
 
 Required:
   --model NAME                 Model alias or path
-  --dataset NAME               Dataset name (e.g. gsm8k)
+  --dataset NAME               Dataset name (e.g. gsm8k_train)
   --data_path PATH             Rollout Stage2 output (*_all_paths.json)
 
 Options:
-  --output_dir PATH            Output dir (default: ./output/09_cliff_dpo/01_candidates/{model_short})
+  --output_dir PATH            Output dir (default: ./output/07_cliff_dpo/01_candidates/{model_short})
   --gpus "0,1"              Comma-separated GPU IDs (default: 0)
   --mode MODE                  thinking|non_thinking (default: non_thinking)
   --k_candidates N             Top-k candidate count (default: 10)
   --num_samples N              Rollout samples per candidate (default: 64)
   --chunk_size N               Cliffs per save chunk (default: 10)
   --force                      Reset existing phase files before running
-  --log_dir PATH               Log directory (default: ./output/09_cliff_dpo/logs)
+  --log_dir PATH               Log directory (default: ./output/07_cliff_dpo/logs)
   --log_level LVL              DEBUG|INFO|WARNING|ERROR (default: INFO)
 
 Backward-compatible aliases:
@@ -79,13 +79,13 @@ MODEL_SHORT=$(python3 -c "import src.config as config; print(config.get_model_sh
 
 # Leave OUTPUT_DIR empty -> canonical default path.
 if [[ -z "$OUTPUT_DIR" ]]; then
-    OUTPUT_DIR="./output/09_cliff_dpo/01_candidates/${MODEL_SHORT}"
+    OUTPUT_DIR="./output/07_cliff_dpo/01_candidates/${MODEL_SHORT}"
 fi
 
 mkdir -p "$LOG_DIR" "$OUTPUT_DIR"
 
 echo "=========================================="
-echo "Cliff-DPO Candidate Rollout (Step 1)"
+echo "Cliff-DPO Candidate Rollout"
 echo "  Model:          $MODEL"
 echo "  Resolved Model: $MODEL_PATH"
 echo "  Model Short:    $MODEL_SHORT"
@@ -122,7 +122,7 @@ if $FORCE; then
 fi
 
 if [[ $NUM_SHARDS -le 1 ]]; then
-    CUDA_VISIBLE_DEVICES="${GPU_ARR[0]}" "${BASE_CMD[@]}" --gpus 0
+    CUDA_VISIBLE_DEVICES="${GPU_ARR[0]}" "${BASE_CMD[@]}" --gpus "${GPU_ARR[0]}"
     echo "Done."
     exit 0
 fi

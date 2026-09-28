@@ -35,8 +35,8 @@ huggingface_cache/
 torch_compile_cache/
 
 # Downloaded model weights: regenerate with src.utils.download_models
-model/
-models/
+/model
+/models
 *.safetensors
 *.bin
 *.pt
@@ -49,10 +49,10 @@ data/input/
 data/cache/
 
 # Experiment and training outputs
-output/
-outputs/
-results/
-runs/
+/output/
+/outputs/
+/results/
+/runs/
 wandb/
 logs/
 *.log
@@ -66,7 +66,6 @@ temp/
 # - paper_images/
 # - figure/data/
 # - figure/output/
-# - figure/output_recovery/
 
 # Local README previews
 README_tmp.html

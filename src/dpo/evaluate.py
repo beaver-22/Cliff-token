@@ -1,5 +1,5 @@
 """
-Step 4: Post-training Evaluation
+Cliff-DPO evaluation
 
 Evaluates baseline and DPO-trained models on math benchmarks using accuracy.
 Supports single model eval, LoRA adapter eval, and multi-model comparison.
@@ -22,16 +22,16 @@ Usage:
     # LoRA adapter
     python -m src.dpo.evaluate \
         --model ./model/Qwen3-0.6B \
-        --adapter_path ./output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_all/
+        --adapter_path ./output/07_cliff_dpo/03_training/Qwen3-0.6B/gsm8k_train/cliff_sampled_off_only_seed42/
 
-    # Compare multiple Cliff-DPO variants on full suite
+    # Compare multiple Cliff-DPO adapters on the full suite
     python -m src.dpo.evaluate \
         --model ./model/Qwen3-0.6B \
-        --adapter_paths none \
-            ./output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_all/ \
-            ./output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_uncertainty_sampled_off_only/ \
-        --labels Baseline "Cliff-all" "Cliff-uncertainty-sampled-off" \
-        --datasets gsm8k gsm1k math500 aime25
+        --adapter_paths \
+            ./output/07_cliff_dpo/03_training/Qwen3-0.6B/gsm8k_train/cliff_uncertainty_only_seed42/ \
+            ./output/07_cliff_dpo/03_training/Qwen3-0.6B/gsm8k_train/cliff_sampled_off_only_seed42/ \
+        --labels uncertainty_seed42 sampled_off_seed42 \
+        --full_suite --token_profile paper --aime_samples 64
 """
 
 # Full evaluation suite (gsm8k testset + 3 OOD benchmarks)
@@ -60,7 +60,7 @@ from src.analysis.generator import build_chat_prompt, sample_problems
 from src.dpo.logging_utils import parse_log_level, setup_logger
 from src.utils.grader import batch_grade_responses_mathverify
 
-logger = logging.getLogger("dpo.step5_eval")
+logger = logging.getLogger("dpo.evaluate")
 
 
 # ============================================================
@@ -147,7 +147,7 @@ def evaluate_model(
     max_new_tokens = config.get_max_tokens(dataset_name, mode, token_profile=token_profile)
 
     # AIME-style datasets: multi-sample avg@N with model's own stochastic temp.
-    # Matches scripts/run_fullset_eval.sh (aime_samples=64, Qwen3 non_thinking=0.7).
+    # AIME avg@N uses the model sampling config (e.g. Qwen3 non_thinking T=0.7).
     is_aime_multi = dataset_name.lower().startswith("aime") and aime_samples > 1
 
     if is_aime_multi:
@@ -555,8 +555,8 @@ def main():
                              "deterministic). Set >0 (e.g. 0.7) for stochastic sampling.")
     parser.add_argument("--aime_samples", type=int, default=1,
                         help="Samples per problem for aime* datasets (avg@N). Default: 1 "
-                             "(greedy, same as other datasets). Set to 64 to match "
-                             "scripts/run_fullset_eval.sh paper-profile aime25 evaluation.")
+                             "(greedy, same as other datasets). The paper uses 64 "
+                             "(avg@64).")
     parser.add_argument("--aime_temperature", type=float, default=None,
                         help="Override temperature for aime* multi-sample runs. "
                              "Default: None (auto from MODEL_CONFIGS[<mode>].temperature, "
@@ -583,7 +583,7 @@ def main():
                         help="Labels for each adapter (must match --adapter_paths)")
 
     # Logging
-    parser.add_argument("--log_dir", default="./output/09_cliff_dpo/logs")
+    parser.add_argument("--log_dir", default="./output/07_cliff_dpo/logs")
     parser.add_argument("--log_level", default="INFO",
                         choices=["DEBUG", "INFO", "WARNING", "ERROR"])
 
@@ -610,14 +610,14 @@ def main():
     model_path = config.resolve_model_path(args.model)
     model_short = config.get_model_short_name(model_path)
 
-    # Default output dir: ./output/09_cliff_dpo/04_eval/{model_short}/
+    # Default output dir: ./output/07_cliff_dpo/04_eval/{model_short}/
     if args.output_dir is None:
-        args.output_dir = f"./output/09_cliff_dpo/04_eval/{model_short}"
+        args.output_dir = f"./output/07_cliff_dpo/04_eval/{model_short}"
 
     # Setup logger
     global logger
     logger = setup_logger(
-        name=f"step5_eval_{model_short}",
+        name=f"eval_{model_short}",
         log_dir=args.log_dir,
         level=parse_log_level(args.log_level),
     )

@@ -1,6 +1,6 @@
 """Compute per-token rank/logprob/entropy on existing inference outputs.
 
-For each (model, dataset) under output/01_inference/, runs vLLM with
+For each (model, dataset) under output/01_stem_traces/, runs vLLM with
 prompt_logprobs=20 on (prompt + response) and saves an augmented copy at
 output/02_token_stats/<model>/<dataset>_all_paths.json with three
 new parallel arrays per path:
@@ -25,7 +25,7 @@ import argparse
 
 sys.path.insert(0, ".")
 
-DEFAULT_SOURCE = "output/01_inference"
+DEFAULT_SOURCE = "output/01_stem_traces"
 DEFAULT_OUTPUT = "output/02_token_stats"
 DEFAULT_DATASETS = ["gsm1k_100", "math500_100", "aime25"]
 
@@ -33,7 +33,6 @@ DEFAULT_DATASETS = ["gsm1k_100", "math500_100", "aime25"]
 # Preserves canonical order (Qwen → Llama → Gemma, larger first within family).
 MODEL_DIR_TO_ALIAS = {
     "Qwen3-8B":               "qwen3-8b",
-    "Qwen3-8B-greedy":        "qwen3-8b",
     "Qwen3-4B":               "qwen3-4b",
     "Qwen3-0.6B":             "qwen3-0.6b",
     "Llama-3.2-1B-Instruct":  "llama-3.2-1b",

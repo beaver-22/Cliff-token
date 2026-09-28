@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# RQ1-1: Cliff Token Occurrence Analysis
+# RQ1: Cliff token occurrence in correct vs. incorrect traces (Figure 2)
 # Discovers rollout results, runs multi-model analysis, generates all outputs.
 set -euo pipefail
 
@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT"
 
-ROLLOUT_DIR="./output/03_rollout"
+ROLLOUT_DIR="./output/03_rollouts"
 OUTPUT_DIR=""
 MODELS=""
 DATASETS=""
@@ -16,13 +16,13 @@ usage() {
   cat <<'USAGE'
 Usage: scripts/run_exp1_occurrence.sh [options]
 
-RQ1-1: Cliff Token Occurrence Analysis (Success vs Failure).
-Auto-discovers completed rollout results from output/03_rollout/.
+RQ1: Cliff token occurrence in correct vs. incorrect traces (Figure 2).
+Auto-discovers completed rollout results from output/03_rollouts/.
 
 Options:
   --models "m1,m2,..."     Model names (default: auto-discover all)
   --datasets "d1,d2,..."   Dataset names (default: auto-discover all)
-  --rollout_dir PATH       Rollout results directory (default: ./output/03_rollout)
+  --rollout_dir PATH       Rollout results directory (default: ./output/03_rollouts)
   --output_dir PATH        Output directory (default: ./output/04_cliff_occurrence/<timestamp>)
 
 Examples:
@@ -55,7 +55,7 @@ if [[ -z "$OUTPUT_DIR" ]]; then
 fi
 
 echo "============================================================"
-echo "RQ1-1: Cliff Token Occurrence Analysis"
+echo "RQ1: Cliff token occurrence"
 echo "============================================================"
 echo "Rollout dir: $ROLLOUT_DIR"
 echo "Output dir:  $OUTPUT_DIR"
@@ -78,11 +78,6 @@ for model_dir in sorted(rollout_dir.iterdir()):
     if not model_dir.is_dir():
         continue
     model_name = model_dir.name
-    # Skip models not used in main analysis
-    SKIP_MODELS = {"Qwen3-8B-greedy", "gemma-3-1b-it", "gemma-3-12b-it"}
-    if model_name in SKIP_MODELS:
-        print(f"  SKIP {model_name} (excluded)")
-        continue
     if models_filter and model_name not in models_filter:
         continue
 

@@ -1,16 +1,17 @@
 """
-Step 3: Cliff-DPO Training with TRL + LoRA
+Cliff-DPO training with TRL + LoRA (single-token preference pairs).
 
-Supports:
-  - Cliff-DPO token-level (cliff_1N, cliff_hard; deterministic/uncertain/sampled_off ablations)
-  - All hyperparameters configurable via CLI
+Defaults follow the paper configuration (beta 0.1, sigmoid loss, lr 1e-6,
+cosine, warmup 0.1, 1 epoch, batch 4 x grad-accum 16, LoRA r32 / alpha 64 /
+dropout 0.05 on all attention and MLP projections). The paper uses --lr 5e-6
+for Llama-3.2-1B and Qwen3-0.6B.
 
 Usage:
     python -m src.dpo.train_dpo \
         --model ./model/Qwen3-0.6B \
-        --dataset_path ./output/09_cliff_dpo/02_pairs/Qwen3-0.6B/cliff_all_gsm8k.json \
-        --output_dir ./output/09_cliff_dpo/03_training/Qwen3-0.6B/gsm8k/cliff_all \
-        --beta 0.1 --lr 5e-7 --lora_r 16
+        --dataset_path ./output/07_cliff_dpo/02_pairs/Qwen3-0.6B/cliff_sampled_off_only_gsm8k_train.json \
+        --output_dir ./output/07_cliff_dpo/03_training/Qwen3-0.6B/gsm8k_train/cliff_sampled_off_only_seed42 \
+        --lr 5e-6 --seed 42
 
     # Evaluation is NOT run here. After training, run:
     #   python -m src.dpo.evaluate --model ./model/Qwen3-0.6B \
@@ -42,7 +43,7 @@ DPOTrainer.get_batch_samples = _HFTrainer.get_batch_samples
 
 from src.dpo.logging_utils import parse_log_level, setup_logger
 
-logger = logging.getLogger("dpo.step4_train")
+logger = logging.getLogger("dpo.train")
 
 
 # Silence trl 0.9.6 × transformers 4.46+ noise: trl's DPOTrainer accesses
@@ -479,7 +480,7 @@ def main():
                         choices=["online", "offline", "disabled"])
 
     # Logging
-    parser.add_argument("--log_dir", default="./output/09_cliff_dpo/logs")
+    parser.add_argument("--log_dir", default="./output/07_cliff_dpo/logs")
     parser.add_argument("--log_level", default="INFO",
                         choices=["DEBUG", "INFO", "WARNING", "ERROR"])
 
@@ -489,7 +490,7 @@ def main():
     global logger
     run_label = os.path.basename(args.output_dir.rstrip("/")) or "dpo_run"
     logger = setup_logger(
-        name=f"step4_train_{run_label}",
+        name=f"train_{run_label}",
         log_dir=args.log_dir,
         level=parse_log_level(args.log_level),
     )
@@ -528,14 +529,7 @@ def main():
         wandb_mode=args.wandb_mode,
     )
 
-    # NOTE: auto-eval has been removed. Running evaluate.py inside the same
-    # GPU as a just-finished training run caused contention with other
-    # concurrent training/auto-eval instances during grid sweeps, producing
-    # corrupted accuracy numbers (see the v4 vs v5 cliff_1N_all eval where
-    # the same adapter scored 68% in a clean eval and 54% during contention).
-    # Run evaluation as a separate `python -m src.dpo.evaluate` command after
-    # all training is done.
-
+    # Evaluation is run separately with scripts/run_dpo_eval.sh.
 
 if __name__ == "__main__":
     main()

@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# RQ1-3 unified batch entrypoint.
+# RQ1 Cliff-del / Cliff-keep batch entrypoint (Figure 3).
 # Runs all (model, dataset) combinations end-to-end:
-#   Phase 1 (GPU): cliff detection + 4-method deletion experiments per pair
-#   Phase 2 (CPU): aggregation, model x dataset grids, failure-only grids,
-#                  exp2 methods grids, CSV/MD exports
+#   Phase 1 (GPU): cliff detection + Cliff-del / Cliff-keep resampling per pair
+#   Phase 2 (CPU): first-cliff pass@k on incorrect traces (CSV)
 #
 # To re-run only Phase 2 against an existing batch dir, use
 # --analysis_only --output_dir <batch_dir>.
@@ -53,7 +52,7 @@ trap 'cleanup HUP'  HUP
 MODELS=""
 DATASETS=""
 GPU_LIST=""
-ROLLOUT_DIR="./output/03_rollout"
+ROLLOUT_DIR="./output/03_rollouts"
 OUTPUT_DIR=""
 NUM_SAMPLES=64
 ANALYSIS_ONLY=0
@@ -62,18 +61,17 @@ usage() {
   cat <<'USAGE'
 Usage: scripts/run_exp1_deletion.sh [options]
 
-RQ1-3 unified batch: run cliff-del/keep + critical/tangent/random
-experiments across many (model, dataset) combinations on multiple GPUs,
-then aggregate per-model and produce all grid plots, CSVs, and Markdown
-tables. Combinations without rollout data are skipped automatically.
+RQ1 batch: run Cliff-del / Cliff-keep resampling across (model, dataset)
+combinations on multiple GPUs, then compute first-cliff pass@k on incorrect
+traces. Combinations without rollout data are skipped automatically.
 
 Options:
   --models "m1,m2,..."    Model names (default: auto-discover from rollout_dir)
   --datasets "d1,d2,..."  Dataset names (default: auto-discover)
   --gpus "0,1"            GPU IDs to use (round-robin); required (unless --analysis_only)
-  --rollout_dir PATH      Rollout dir (default: ./output/03_rollout)
+  --rollout_dir PATH      Rollout dir (default: ./output/03_rollouts)
   --output_dir PATH       Batch output dir (default: ./output/05_deletion_ablation/<timestamp>_batch)
-  --num_samples N         Greedy rollout samples per cliff (default: 64)
+  --num_samples N         Resamples per cliff for each condition (default: 64)
   --analysis_only         Skip GPU work; re-run Phase 2 on --output_dir
 
 Examples:
@@ -113,7 +111,7 @@ if [[ "$ANALYSIS_ONLY" -eq 1 ]]; then
     exit 1
   fi
   echo "============================================================"
-  echo "RQ1-3 Analysis-only (Phase 2)"
+  echo "RQ1 Cliff-del / Cliff-keep: analysis only"
   echo "============================================================"
   echo "Batch dir: $OUTPUT_DIR"
   echo ""
@@ -122,7 +120,6 @@ if [[ "$ANALYSIS_ONLY" -eq 1 ]]; then
   echo "============================================================"
   echo "ANALYSIS COMPLETE"
   echo "============================================================"
-  ls -1 "$OUTPUT_DIR/grid/" 2>/dev/null || true
   exit 0
 fi
 
@@ -140,7 +137,7 @@ RUNS_DIR="$OUTPUT_DIR/runs"
 mkdir -p "$RUNS_DIR"
 
 echo "============================================================"
-echo "RQ1-3 Batch (Phase 1: GPU rollout, Phase 2: analysis)"
+echo "RQ1 Cliff-del / Cliff-keep batch"
 echo "============================================================"
 echo "Models:       ${MODELS:-(auto)}"
 echo "Datasets:     ${DATASETS:-(auto)}"
@@ -226,8 +223,8 @@ JOB_TIMEOUT="${JOB_TIMEOUT:-120m}"
 while IFS=$'\t' read -r MODEL DS DATA_PATH; do
   RUN_OUT="$RUNS_DIR/${MODEL}_${DS}"
 
-  # Skip if all 4 sub_exp_2 variants already exist (true completion marker)
-  if [[ -f "$RUN_OUT/sub_exp_2/exp2_pass_at_k_all_failure.json" ]]; then
+  # Skip runs that already finished
+  if [[ -f "$RUN_OUT/cliff_del_keep/exp1_pass_at_k.json" ]]; then
     echo "  [skip-existing] $MODEL/$DS already complete in $RUN_OUT"
     continue
   fi
@@ -263,7 +260,7 @@ echo "  All GPU runs finished."
 # ---------------------------------------------------------
 echo ""
 echo "============================================================"
-echo "Phase 2: Aggregation, plots, CSV, MD"
+echo "Phase 2: first-cliff pass@k (incorrect traces)"
 echo "============================================================"
 
 python3 scripts/_exp1_deletion_analyze.py "$OUTPUT_DIR"
@@ -273,12 +270,4 @@ echo "============================================================"
 echo "BATCH COMPLETE"
 echo "============================================================"
 echo "Output: $OUTPUT_DIR"
-echo ""
-echo "Per-model results:"
-ls -1 "$OUTPUT_DIR/per_model/" 2>/dev/null || true
-echo ""
-echo "Grid:"
-ls -1 "$OUTPUT_DIR/grid/" 2>/dev/null || true
-echo ""
-echo "Summary:"
-ls -1 "$OUTPUT_DIR/summary_table.csv" 2>/dev/null && head -5 "$OUTPUT_DIR/summary_table.csv" || true
+echo "CSV:    $OUTPUT_DIR/pass_at_k_first_cliff_incorrect.csv"

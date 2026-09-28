@@ -13,13 +13,9 @@ from typing import List, Dict, Optional, Tuple
 
 from vllm import SamplingParams
 
-from src.analysis.detector import find_all_cliff_tokens, find_all_cliff_tokens_statistical
+from src.analysis.detector import find_all_cliff_tokens_statistical
 from src.utils.grader import batch_grade_responses_mathverify
 from src import config
-
-# Default to statistical cliff detection (z-test based)
-USE_STATISTICAL_CLIFF = True
-
 
 @dataclass
 class CliffRegenerationResult:
@@ -64,7 +60,6 @@ def run_cliff_on_paths(
     dataset_name: str,
     num_samples: int = 64,
     mode: str = "non_thinking",
-    drop_threshold: float = config.DEFAULT_CLIFF_THRESHOLD,
     model_path: str = None,
 ) -> List[CliffRegenerationResult]:
     """Run Cliff-del and Cliff-keep for all cliff tokens in all paths.
@@ -87,25 +82,17 @@ def run_cliff_on_paths(
     )
 
     # Phase 1: Collect all requests
-    method_str = "statistical z-test" if USE_STATISTICAL_CLIFF else f"fixed threshold={drop_threshold}"
-    print(f"  Detecting cliff tokens ({method_str})...")
+    print("  Detecting cliff tokens (adaptive z-test threshold)...")
     requests = []  # (result_idx, mode, prefix_ids, golden_answers)
     results = []
 
     for p in paths:
         scores = p.get("all_position_scores", [])
-        if USE_STATISTICAL_CLIFF:
-            cliffs = find_all_cliff_tokens_statistical(
-                scores,
-                tokens=p.get("response_tokens"),
-                token_ids=p.get("response_token_ids"),
-            )
-        else:
-            cliffs = find_all_cliff_tokens(
-                scores, drop_threshold,
-                tokens=p.get("response_tokens"),
-                token_ids=p.get("response_token_ids"),
-            )
+        cliffs = find_all_cliff_tokens_statistical(
+            scores,
+            tokens=p.get("response_tokens"),
+            token_ids=p.get("response_token_ids"),
+        )
         if not cliffs:
             continue
 

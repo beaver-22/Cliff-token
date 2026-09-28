@@ -167,10 +167,9 @@ def download_gsm8k(output_dir: Path) -> list:
     Download GSM8K (openai/gsm8k) via HuggingFace `datasets` library.
 
     Saves:
-      - Train split (~7473 problems) into 3 shards of 2500/2500/2473 with
-        globally-unique ids (GSM8K_0 ... GSM8K_7472) so multi-server rollout
-        results can be concatenated later.
-      - Full test split (~1319 problems) as GSM8K_test.jsonl.
+      - Train split (7473 problems, ids GSM8K_0 ... GSM8K_7472) as
+        GSM8K_train.jsonl. Used to build Cliff-DPO training pairs.
+      - Test split (1319 problems) as GSM8K_test.jsonl. Used for evaluation.
 
     Fields: question (str), answer (str, CoT ending in "#### <final>")
     """
@@ -197,15 +196,11 @@ def download_gsm8k(output_dir: Path) -> list:
     test_records = _to_records(ds["test"], "GSM8K_test")
 
     paths = []
-    # Train: 2500 / 2500 / 2473 shards
-    shards = [train_records[0:2500], train_records[2500:5000], train_records[5000:]]
-    for idx, shard in enumerate(shards, start=1):
-        out_path = output_dir / f"GSM8K_train_{idx}.jsonl"
-        _save_jsonl(shard, out_path)
-        print(f"  Saved {len(shard)} problems → {out_path}")
-        paths.append(out_path)
+    train_path = output_dir / "GSM8K_train.jsonl"
+    _save_jsonl(train_records, train_path)
+    print(f"  Saved {len(train_records)} problems → {train_path}")
+    paths.append(train_path)
 
-    # Test split (kept for later use)
     test_path = output_dir / "GSM8K_test.jsonl"
     _save_jsonl(test_records, test_path)
     print(f"  Saved {len(test_records)} problems → {test_path}")
@@ -269,7 +264,7 @@ def main():
         epilog="""
 Datasets:
   gsm1k          → GSM1K_test.jsonl           (~1205 problems, ScaleAI/gsm1k)
-  gsm8k          → GSM8K_train_{1,2,3}.jsonl  (~7473 problems, openai/gsm8k, 3-shard split)
+  gsm8k          → GSM8K_train.jsonl, GSM8K_test.jsonl (7473 / 1319 problems, openai/gsm8k)
   math500        → MATH_test.jsonl            (  500 problems, HuggingFaceH4/MATH-500)
   aime24         → aime24.jsonl               (   30 problems, HuggingFaceH4/aime_2024)
   aime25         → aime25.jsonl               (   30 problems, MathArena/aime_2025)

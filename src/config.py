@@ -469,14 +469,8 @@ DATASET_PATHS = {
     "gsm8k": {
         "test":  "./data/input/GSM8K_test.jsonl",
     },
-    "gsm8k_1": {
-        "test":  "./data/input/GSM8K_train_1.jsonl",
-    },
-    "gsm8k_2": {
-        "test":  "./data/input/GSM8K_train_2.jsonl",
-    },
-    "gsm8k_3": {
-        "test":  "./data/input/GSM8K_train_3.jsonl",
+    "gsm8k_train": {
+        "test":  "./data/input/GSM8K_train.jsonl",
     },
 }
 
@@ -489,9 +483,7 @@ DATASET_SOURCE_NAMES = {
     "aime24":  "AIME",
     "aime25":  "AIME",
     "gsm8k":       "GSM8K",
-    "gsm8k_1": "GSM8K",
-    "gsm8k_2": "GSM8K",
-    "gsm8k_3": "GSM8K",
+    "gsm8k_train": "GSM8K",
 }
 
 
@@ -532,6 +524,7 @@ def get_dataset_source_name(dataset_name: str) -> str:
 # Fast/default profile used in daily experiments.
 _DATASET_MAX_TOKENS_DEFAULT = {
     "non_thinking": {
+        "gsm8k":          1024,
         "gsm1k":          1024,
         "math500":        2048,
         "aime24":         8192,
@@ -555,6 +548,7 @@ _DEFAULT_MAX_TOKENS_DEFAULT = {
 # - AIME'24/AIME'25:    38912
 _DATASET_MAX_TOKENS_PAPER = {
     "non_thinking": {
+        "gsm8k":   8192,
         "gsm1k":   8192,
         "math500": 16384,
         "aime24":  32768,
@@ -627,6 +621,7 @@ def get_max_tokens(
 # No need to fill up to inference max_tokens, so a rollout-specific upper bound is used.
 ROLLOUT_MAX_TOKENS = {
     "non_thinking": {
+        "gsm8k":   1024,
         "gsm1k":   1024,
         "math500": 2048,
         "aime24":  4096,
@@ -662,19 +657,8 @@ def get_rollout_max_tokens(dataset_name: str, mode: str = "non_thinking") -> int
 # Rollout Configuration
 # =============================================================================
 
-ROLLOUT_SAMPLES = 64      # token-wise potential = 64-sample rollout
+ROLLOUT_SAMPLES = 64      # success probability = 64-sample rollout
 ROLLOUT_WINDOW_SIZE = 1   # token-wise (every single token)
-
-
-# =============================================================================
-# Cliff Token Thresholds
-# =============================================================================
-
-DEFAULT_CLIFF_THRESHOLD = 0.20   # Cliff token: potential drop >= 0.20
-CRITICAL_TOKEN_THRESHOLD = 0.05  # Critical token: score=0 and all subsequent <= 0.05
-
-# Alias for backward compatibility
-DEFAULT_DROP_THRESHOLD = DEFAULT_CLIFF_THRESHOLD
 
 
 # =============================================================================

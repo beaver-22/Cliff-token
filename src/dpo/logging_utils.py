@@ -1,7 +1,7 @@
 """Shared logging setup for DPO pipeline modules.
 
 Provides a `setup_logger()` helper that configures both file and stdout
-handlers, writes to `./output/09_cliff_dpo/logs/{name}_{timestamp}.log` by default.
+handlers, writes to `./output/07_cliff_dpo/logs/{name}_{timestamp}.log` by default.
 """
 
 import logging
@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_LOG_DIR = "./output/09_cliff_dpo/logs"
+DEFAULT_LOG_DIR = "./output/07_cliff_dpo/logs"
 
 
 def setup_logger(
@@ -23,7 +23,7 @@ def setup_logger(
     """Configure a named logger with file + stdout handlers.
 
     Args:
-        name: Logger name (e.g. "step1_rollout_gsm8k"). Also used in the log filename.
+        name: Logger name (e.g. "candidate_rollout_gsm8k_train"). Also used in the log filename.
         log_dir: Directory where the log file will be created.
         level: Logging level.
         console: Whether to also log to stdout.
