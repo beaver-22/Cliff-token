@@ -61,7 +61,7 @@ python -m src.utils.create_subsets --seed 42
 
 ## Released Data
 
-The public [Hugging Face dataset](https://huggingface.co/datasets/Beaverdam/cliff-token-data) contains separate, uncompressed JSON files under `stem_traces/` and `rollouts/`. Rollouts include token-level success probabilities used in the paper. **Use these files directly; regenerating stem traces or rollouts is unnecessary.** See the dataset README for coverage and fields. Download them into the paths expected by the analysis scripts:
+Download the stem traces and rollouts as uncompressed JSON from the [Hugging Face dataset](https://huggingface.co/datasets/Beaverdam/cliff-token-data):
 
 ```bash
 python scripts/download_release_data.py --repo-id Beaverdam/cliff-token-data
