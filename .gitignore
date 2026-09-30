@@ -50,6 +50,7 @@ data/cache/
 
 # Experiment and training outputs
 /output/
+/release_data/
 /outputs/
 /results/
 /runs/

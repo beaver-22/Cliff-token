@@ -3,6 +3,7 @@
 # Cliff Tokens: Analyzing Failure Trigger Tokens in LLM Mathematical Reasoning
 
 📃 [Paper Link (arXiv)](https://arxiv.org/abs/2606.25524)
+🌐 [Project Page](https://jaeyongko.github.io/cliff-token/)
 
 **Jaeyong Ko**¹, **Jinu Lee**², **Pilsung Kang**¹, **Yukyung Lee**³†
 
@@ -49,7 +50,7 @@ conda activate cliff
 pip install -r requirements.txt
 ```
 
-Unpacking the released traces requires no model downloads. For GPU analyses, new model runs, or evaluation, download the models and benchmark datasets. Llama and Gemma require access to their gated Hugging Face repositories.
+Downloading the released traces requires no model downloads. For GPU analyses, new model runs, or evaluation, download the models and benchmark datasets. Llama and Gemma require access to their gated Hugging Face repositories.
 
 ```bash
 export GPU_IDS=0
@@ -61,10 +62,10 @@ python -m src.utils.create_subsets --seed 42
 
 ## Released Data
 
-`release_data/rollouts/` includes the stem traces and token-level success probabilities used in the paper. **Use these files directly; regenerating stem traces or rollouts is unnecessary.** See [the data guide](release_data/README.md) for coverage and fields.
+The public [Hugging Face dataset](https://huggingface.co/datasets/Beaverdam/cliff-token-data) contains separate, uncompressed JSON files under `stem_traces/` and `rollouts/`. Rollouts include token-level success probabilities used in the paper. **Use these files directly; regenerating stem traces or rollouts is unnecessary.** See the dataset README for coverage and fields. Download them into the paths expected by the analysis scripts:
 
 ```bash
-python scripts/unpack_release_data.py
+python scripts/download_release_data.py --repo-id Beaverdam/cliff-token-data
 ```
 
 For analyses that need token rank or entropy, compute them from the released traces:
