@@ -3,6 +3,7 @@
 # Cliff Tokens: Analyzing Failure Trigger Tokens in LLM Mathematical Reasoning
 
 📃 [Paper Link (arXiv)](https://arxiv.org/abs/2606.25524)
+
 🌐 [Project Page](https://jaeyongko.github.io/cliff-token/)
 
 **Jaeyong Ko**¹, **Jinu Lee**², **Pilsung Kang**¹, **Yukyung Lee**³†
